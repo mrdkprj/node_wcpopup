@@ -10,6 +10,7 @@ use windows::Win32::Foundation::HWND;
 
 static MENU_MAP: Lazy<Mutex<HashMap<i32, Menu>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
+#[derive(Debug)]
 struct ElectronMenuItem {
     itype: String,
     label: String,
@@ -95,6 +96,7 @@ pub fn build_from_template_with_config(mut cx: FunctionContext) -> JsResult<JsNu
     let config = to_config(&mut cx, config_obj);
 
     let hwnd = build(&mut cx, parent, templates, config);
+
     let id = cx.number(hwnd as i32);
     Ok(id)
 }
@@ -204,7 +206,7 @@ pub fn popup(mut cx: FunctionContext) -> JsResult<JsPromise> {
     let channel = cx.channel();
 
     async_std::task::spawn(async move {
-        let map = MENU_MAP.try_lock().unwrap();
+        let map = MENU_MAP.lock().await;
         let menu = map.get(&(id as i32)).unwrap();
         let x = menu.popup_at_async(x as i32, y as i32).await;
 
