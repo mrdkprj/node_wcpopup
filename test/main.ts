@@ -25,10 +25,12 @@ const createWindow = () => {
         hwnd = hbuf.readInt32BE()
     }
     let config = menu.getDefaultConfig();
-    config.corner = "Round";
-    config.theme = "Dark";
+    config.theme = "Dark"
     config.size.itemVerticalPadding = 15;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config)
+
+    menu.append({accelerator:"F1", label:"Test"});
+
 }
 
 const handleSetTitle = async (_event:any, pos:any) => {
@@ -66,8 +68,9 @@ const getTemp = () => {
     { type: "separator" },
     {
       id:"",
-        label: t("playlist"),
-        accelerator: "CmdOrCtrl+P",
+        //label: t("playlist"),
+        label: t("playbackSpeed"),
+        //accelerator: "CmdOrCtrl+P",
     },
     {
       id:"",
@@ -82,7 +85,7 @@ const getTemp = () => {
     {
       id:"",
         label: t("capture"),
-        accelerator: "CmdOrCtrl+S",
+        //accelerator: "CmdOrCtrl+S",
     },
     {      id:"", type: "separator" },
     {

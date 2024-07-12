@@ -219,6 +219,27 @@ pub fn popup(mut cx: FunctionContext) -> JsResult<JsPromise> {
     Ok(promise)
 }
 
+pub fn popup_sync(mut cx: FunctionContext) -> JsResult<JsObject> {
+    if cx.len() != 3 {
+        return cx.throw_error("Invalid number of arguments");
+    }
+
+    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let x = cx.argument::<JsNumber>(1)?.value(&mut cx);
+    let y = cx.argument::<JsNumber>(2)?.value(&mut cx);
+
+    let map = MENU_MAP.try_lock().unwrap();
+    let menu = map.get(&(id as i32)).unwrap();
+    let x = menu.popup_at(x as i32, y as i32);
+
+    let result = match x {
+        Some(data) => from_selected_item(&mut cx, &data),
+        None => Ok(cx.empty_object()),
+    };
+
+    result
+}
+
 pub fn items(mut cx: FunctionContext) -> JsResult<JsArray> {
     let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let map = MENU_MAP.try_lock().unwrap();
@@ -307,7 +328,7 @@ fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuItem {
     } else {
         Some(accelerator_str.as_str())
     };
-    let disabled = if enabled { Some(true) } else { None };
+    let disabled = if enabled { None } else { Some(true) };
 
     let item_type_str = value
         .get_opt::<JsString, _, _>(cx, "type")
@@ -382,11 +403,14 @@ fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResult<'
     let checked = cx.boolean(item.checked());
     obj.set(cx, "checked", checked)?;
 
+    let enabled = cx.boolean(!item.disabled());
+    obj.set(cx, "enabled", enabled)?;
+
     Ok(obj)
 }
 
-fn from_selected_item<'a>(
-    cx: &mut TaskContext<'a>,
+fn from_selected_item<'a, C: Context<'a>>(
+    cx: &mut C,
     item: &SelectedMenuItem,
 ) -> JsResult<'a, JsObject> {
     let obj = cx.empty_object();
@@ -546,6 +570,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
         build_from_template_with_config,
     )?;
     cx.export_function("popup", popup)?;
+    cx.export_function("popupSync", popup_sync)?;
     cx.export_function("items", items)?;
     cx.export_function("remove", remove)?;
     cx.export_function("append", append)?;

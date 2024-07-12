@@ -1,18 +1,14 @@
 {
   "name": "node_wcpopup",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "cargo test",
-    "cargo-build": "cargo build --message-format=json > cargo.log",
-    "postcargo-build": "neon dist < cargo.log && move index.node ./build/",
-    "debug": "npm run cargo-build --",
-    "build_org": "npm run cargo-build -- --release",
-    "install_org": "npm run cargo-build -- --release",
-    "build": "npm run cargo-build --",
-    "install": "npm run cargo-build --",
+    "install": "npm run build-release",
+    "build": "cargo-cp-artifact -nc ./build/index.node -- cargo build --message-format=json-render-diagnostics",
+    "build-debug": "npm run build --",
+    "build-release": "npm run build -- --release",
     "package": "node-pre-gyp package",
     "tsc": "tsc ./lib/index.ts --esModuleInterop --lib ES2015,dom"
   },

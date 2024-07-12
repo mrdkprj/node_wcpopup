@@ -63,10 +63,10 @@ var createWindow = function () {
         hwnd = hbuf.readInt32BE();
     }
     var config = menu.getDefaultConfig();
-    config.corner = "Round";
     config.theme = "Dark";
     config.size.itemVerticalPadding = 15;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
+    menu.append({ accelerator: "F1", label: "Test" });
 };
 var handleSetTitle = function (_event, pos) { return __awaiter(void 0, void 0, void 0, function () {
     var x;
@@ -112,8 +112,9 @@ var getTemp = function () {
         { type: "separator" },
         {
             id: "",
-            label: t("playlist"),
-            accelerator: "CmdOrCtrl+P",
+            //label: t("playlist"),
+            label: t("playbackSpeed"),
+            //accelerator: "CmdOrCtrl+P",
         },
         {
             id: "",
@@ -128,7 +129,7 @@ var getTemp = function () {
         {
             id: "",
             label: t("capture"),
-            accelerator: "CmdOrCtrl+S",
+            //accelerator: "CmdOrCtrl+S",
         },
         { id: "", type: "separator" },
         {
