@@ -1,6 +1,6 @@
 [package]
 name = "node_wcpopup"
-version = "0.0.1"
+version = "0.0.2"
 license = "MIT"
 edition = "2021"
 exclude = ["index.node"]
@@ -24,8 +24,8 @@ features = [
 ]
 
 [dependencies.wcpopup]
-version = "0.1.9"
-features = ["accelerator"]
+version = "0.1.10"
+#features = ["accelerator"]
 
-[patch.crates-io]
-wcpopup = { path = "./wcpopup" }
+#[patch.crates-io]
+#wcpopup = { path = "./wcpopup" }
