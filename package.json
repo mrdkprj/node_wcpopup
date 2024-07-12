@@ -15,7 +15,7 @@
   "author": "mrdkprj",
   "license": "MIT",
   "devDependencies": {
-    "@neon-rs/cli": "^0.1.73",
+    "cargo-cp-artifact": "^0.1.9",
     "typescript": "^5.3.3"
   },
   "dependencies": {}

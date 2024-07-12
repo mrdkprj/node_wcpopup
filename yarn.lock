@@ -2,53 +2,10 @@
 # yarn lockfile v1
 
 
-"@cargo-messages/android-arm-eabi@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/android-arm-eabi/-/android-arm-eabi-0.1.72.tgz#5d1be5cacecbf2bf7b55d564b22dde78cdd768d6"
-  integrity sha512-gGZxIM1mj+Y5x+ULND6ZCNr7f70OJi9wDlycSK8hGONy9wrChN6JAIHryddC5cqcwlYAoQ6IDcDFElnhAYbybA==
-
-"@cargo-messages/darwin-arm64@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/darwin-arm64/-/darwin-arm64-0.1.72.tgz#46b229b20dd206966f229ec35bbb89c06cda67d5"
-  integrity sha512-EAzN5MLaXPljZKZDO5qR+aBs44eSq2ZbEnS7AI/FziE3MzeXbrGOS3fLba5+7yWPFXJyZolXzePm8N1EBv8ovg==
-
-"@cargo-messages/darwin-x64@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/darwin-x64/-/darwin-x64-0.1.72.tgz#546421e0e8d144e936cab3ac27215b0424324f08"
-  integrity sha512-RLo6j8s3nYbjdd1LDct4wamfChyRit7zokUuxtIYCu9XOlltkN5vnj1vwnrPvoqCMZ/7CbbuHFwSTn9A71de/w==
-
-"@cargo-messages/linux-arm-gnueabihf@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/linux-arm-gnueabihf/-/linux-arm-gnueabihf-0.1.72.tgz#a5c5de89e8d83c070b4eec3aa5eed164443c1a58"
-  integrity sha512-tHsRshuzfjrX6SDW3jg6al8vMNLTMgczGnVYl5RuBZf/yrAUuwe30KxA9ge6w6mW6Ox797DyBchzAc9OLgTgmQ==
-
-"@cargo-messages/linux-x64-gnu@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/linux-x64-gnu/-/linux-x64-gnu-0.1.72.tgz#4c7ca242ed6ab6466b8617cde1bd62069e282da1"
-  integrity sha512-VGtL6CCnUbhsP4aYuBNT5kfrAL7o0qjrxw97a+ax13t+nJd26tVEEIKHMu5drvvS/Nm/hn7sLT8zMnnCv0pvHg==
-
-"@cargo-messages/win32-arm64-msvc@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/win32-arm64-msvc/-/win32-arm64-msvc-0.1.72.tgz#2225e7530da9f196b1196a64ec3a5e5eacbb9e4d"
-  integrity sha512-V93Cgz39K+yqa3MveNbhh29pYCp8izK5uEavjPoxlNxAbsMCWH+s0verGDdUcfGxjR1H2V7oZ4FszPqR2SqMRQ==
-
-"@cargo-messages/win32-x64-msvc@0.1.72":
-  version "0.1.72"
-  resolved "https://registry.yarnpkg.com/@cargo-messages/win32-x64-msvc/-/win32-x64-msvc-0.1.72.tgz#bf02bc3a89a7ddd70953f21fc873912dae61ee7d"
-  integrity sha512-knz3uSrO0OSbq3U5VWfCY8FB4NsM43BOWLZ7x4sfaMOC1XWv+IyvDdkLe6DhJx8KUw46KIAimYs9YROrp6l46Q==
-
-"@neon-rs/cli@^0.1.73":
-  version "0.1.73"
-  resolved "https://registry.yarnpkg.com/@neon-rs/cli/-/cli-0.1.73.tgz#681a6fe320227609c2bab0bc1932f0dd00d2302d"
-  integrity sha512-1kv8S/feB6UQWQQwsnGfkSkEBOtlFDNExnioL81E2BwvUWgjQPaseHgpi2EpWVgsPUgur5eBm4QowmlpWkD4/w==
-  optionalDependencies:
-    "@cargo-messages/android-arm-eabi" "0.1.72"
-    "@cargo-messages/darwin-arm64" "0.1.72"
-    "@cargo-messages/darwin-x64" "0.1.72"
-    "@cargo-messages/linux-arm-gnueabihf" "0.1.72"
-    "@cargo-messages/linux-x64-gnu" "0.1.72"
-    "@cargo-messages/win32-arm64-msvc" "0.1.72"
-    "@cargo-messages/win32-x64-msvc" "0.1.72"
+cargo-cp-artifact@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/cargo-cp-artifact/-/cargo-cp-artifact-0.1.9.tgz#32264a0a48109e26c48da334daff9a1da9d9b7c8"
+  integrity sha512-6F+UYzTaGB+awsTXg0uSJA1/b/B3DDJzpKVRu0UmyI7DmNeaAl2RFHuTGIN6fEgpadRxoXGb7gbC1xo4C3IdyA==
 
 typescript@^5.3.3:
   version "5.3.3"
