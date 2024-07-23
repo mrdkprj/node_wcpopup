@@ -453,7 +453,7 @@ dependencies = [
 
 [[package]]
 name = "node_wcpopup"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "async-std",
  "neon",
@@ -760,9 +760,9 @@ checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
 
 [[package]]
 name = "wcpopup"
-version = "0.1.12"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc14ff40431193dc38d1d72d216e1424433c74ba34ce4255db8c0c0723b2a94d"
+checksum = "a05238d229ddc63f72ec2fb96a3ee6e03f00a07ecb8a4b3a3b1700f2e7045dad"
 dependencies = [
  "once_cell",
  "serde",
