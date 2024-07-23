@@ -7,6 +7,7 @@ let menu:Menu;
 
 const createWindow = () => {
   const win = new BrowserWindow({
+    title:"main",
     width: 800,
     height: 600,
     webPreferences: {
@@ -15,22 +16,34 @@ const createWindow = () => {
   })
 
   win.loadFile('index.html')
+
+  const win2 = new BrowserWindow({
+    title:"sub",
+    parent:win,
+    width: 800,
+    height: 600,
+    webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+    }
+  })
+
+  win2.loadFile('index2.html')
+
   menu = new Menu();
-  const hbuf = win.getNativeWindowHandle();
-  let hwnd;
-    if (os.endianness() == "LE") {
-        hwnd = hbuf.readInt32LE()
-    }
-    else {
-        hwnd = hbuf.readInt32BE()
-    }
-    let config = menu.getDefaultConfig();
-    config.theme = "Dark"
-    config.size.itemVerticalPadding = 15;
-    menu.buildFromTemplateWithConfig(hwnd, getTemp(), config)
+  const hbuf = win2.getNativeWindowHandle();
+  let hwnd = 0;
+  if (os.endianness() == "LE") {
+      hwnd = hbuf.readInt32LE()
+  }
+  else {
+      hwnd = hbuf.readInt32BE()
+  }
+  let config = menu.getDefaultConfig();
+  config.theme = "Dark"
+  config.size.itemVerticalPadding = 15;
+  menu.buildFromTemplateWithConfig(hwnd, getTemp(), config)
 
-    menu.append({accelerator:"F1", label:"Test"});
-
+  menu.append({accelerator:"F1", label:"Test"});
 }
 
 const handleSetTitle = async (_event:any, pos:any) => {

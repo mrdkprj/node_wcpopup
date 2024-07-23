@@ -46,6 +46,7 @@ var index_1 = require("../lib/index");
 var menu;
 var createWindow = function () {
     var win = new electron_1.BrowserWindow({
+        title: "main",
         width: 800,
         height: 600,
         webPreferences: {
@@ -53,9 +54,19 @@ var createWindow = function () {
         }
     });
     win.loadFile('index.html');
+    var win2 = new electron_1.BrowserWindow({
+        title: "sub",
+        parent: win,
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path_1.default.join(__dirname, 'preload.js')
+        }
+    });
+    win2.loadFile('index2.html');
     menu = new index_1.Menu();
-    var hbuf = win.getNativeWindowHandle();
-    var hwnd;
+    var hbuf = win2.getNativeWindowHandle();
+    var hwnd = 0;
     if (os_1.default.endianness() == "LE") {
         hwnd = hbuf.readInt32LE();
     }
