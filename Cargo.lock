@@ -395,7 +395,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e310b3a6b5907f99202fcdb4960ff45b93735d7c7d96b760fcff8db2dc0e103d"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.6",
 ]
 
 [[package]]
@@ -453,7 +453,7 @@ dependencies = [
 
 [[package]]
 name = "node_wcpopup"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "async-std",
  "neon",
@@ -760,7 +760,9 @@ checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
 
 [[package]]
 name = "wcpopup"
-version = "0.1.10"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc14ff40431193dc38d1d72d216e1424433c74ba34ce4255db8c0c0723b2a94d"
 dependencies = [
  "once_cell",
  "serde",
