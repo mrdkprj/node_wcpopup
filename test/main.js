@@ -44,7 +44,9 @@ var os_1 = __importDefault(require("os"));
 var path_1 = __importDefault(require("path"));
 var index_1 = require("../lib/index");
 var menu;
+var dark = true;
 var createWindow = function () {
+    electron_1.nativeTheme.themeSource = "dark";
     var win = new electron_1.BrowserWindow({
         title: "main",
         width: 800,
@@ -54,18 +56,18 @@ var createWindow = function () {
         }
     });
     win.loadFile('index.html');
-    var win2 = new electron_1.BrowserWindow({
-        title: "sub",
-        parent: win,
-        width: 800,
-        height: 600,
-        webPreferences: {
-            preload: path_1.default.join(__dirname, 'preload.js')
-        }
-    });
-    win2.loadFile('index2.html');
+    // const win2 = new BrowserWindow({
+    //   title:"sub",
+    //   parent:win,
+    //   width: 800,
+    //   height: 600,
+    //   webPreferences: {
+    //       preload: path.join(__dirname, 'preload.js')
+    //   }
+    // })
+    // win2.loadFile('index2.html')
     menu = new index_1.Menu();
-    var hbuf = win2.getNativeWindowHandle();
+    var hbuf = win.getNativeWindowHandle();
     var hwnd = 0;
     if (os_1.default.endianness() == "LE") {
         hwnd = hbuf.readInt32LE();
@@ -74,7 +76,7 @@ var createWindow = function () {
         hwnd = hbuf.readInt32BE();
     }
     var config = menu.getDefaultConfig();
-    config.theme = "Dark";
+    config.theme = "dark";
     config.size.itemVerticalPadding = 15;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
     menu.append({ accelerator: "F1", label: "Test" });
@@ -91,10 +93,16 @@ var handleSetTitle = function (_event, pos) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
+var toggle = function () {
+    dark = !dark;
+    electron_1.nativeTheme.themeSource = dark ? "dark" : "light";
+    menu.setTheme(electron_1.nativeTheme.themeSource);
+};
 electron_1.app.whenReady().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         createWindow();
         electron_1.ipcMain.on('set-title', handleSetTitle);
+        electron_1.ipcMain.on('toggle', toggle);
         return [2 /*return*/];
     });
 }); });

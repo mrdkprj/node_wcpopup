@@ -25,7 +25,7 @@ features = [
 
 [dependencies.wcpopup]
 version = "0.1.15"
-features = ["accelerator"]
+#features = ["accelerator"]
 
 #[patch.crates-io]
 #wcpopup = { path = "../wcpopup" }

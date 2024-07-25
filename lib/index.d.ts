@@ -20,7 +20,7 @@ declare namespace PopupMenu {
         name?:string;
     }
 
-    type Theme = "Dark" | "Light";
+    type Theme = "dark" | "light" | "system";
     type MenuSize = {
         borderSize: number,
         verticalMargin: number,
@@ -65,6 +65,7 @@ declare namespace PopupMenu {
         remove(index:number):MenuItem;
         append(item:MenuItem):void;
         insert(index:number, item:MenuItem):void;
+        setTheme(theme:Theme):void;
     }
 }
 

@@ -1,11 +1,12 @@
-import { app, BrowserWindow,ipcMain } from "electron";
+import { app, BrowserWindow,ipcMain, nativeTheme } from "electron";
 import os from "os"
 import path from "path";
 import { Menu, MenuItem } from "../lib/index"
 
 let menu:Menu;
-
+let dark = true;
 const createWindow = () => {
+  nativeTheme.themeSource = "dark"
   const win = new BrowserWindow({
     title:"main",
     width: 800,
@@ -17,20 +18,20 @@ const createWindow = () => {
 
   win.loadFile('index.html')
 
-  const win2 = new BrowserWindow({
-    title:"sub",
-    parent:win,
-    width: 800,
-    height: 600,
-    webPreferences: {
-        preload: path.join(__dirname, 'preload.js')
-    }
-  })
+  // const win2 = new BrowserWindow({
+  //   title:"sub",
+  //   parent:win,
+  //   width: 800,
+  //   height: 600,
+  //   webPreferences: {
+  //       preload: path.join(__dirname, 'preload.js')
+  //   }
+  // })
 
-  win2.loadFile('index2.html')
+  // win2.loadFile('index2.html')
 
   menu = new Menu();
-  const hbuf = win2.getNativeWindowHandle();
+  const hbuf = win.getNativeWindowHandle();
   let hwnd = 0;
   if (os.endianness() == "LE") {
       hwnd = hbuf.readInt32LE()
@@ -39,7 +40,7 @@ const createWindow = () => {
       hwnd = hbuf.readInt32BE()
   }
   let config = menu.getDefaultConfig();
-  config.theme = "Dark"
+  config.theme = "dark"
   config.size.itemVerticalPadding = 15;
   menu.buildFromTemplateWithConfig(hwnd, getTemp(), config)
 
@@ -47,13 +48,20 @@ const createWindow = () => {
 }
 
 const handleSetTitle = async (_event:any, pos:any) => {
-    const x = await menu.popup(pos.x, pos.y);
-    console.log(x)
+  const x = await menu.popup(pos.x, pos.y);
+  console.log(x)
+}
+
+const toggle = () => {
+  dark = !dark;
+  nativeTheme.themeSource = dark ? "dark" : "light";
+  menu.setTheme(nativeTheme.themeSource);
 }
 
 app.whenReady().then(async () => {
   createWindow()
   ipcMain.on('set-title', handleSetTitle)
+  ipcMain.on('toggle', toggle)
 })
 
 app.on('window-all-closed', () => {
