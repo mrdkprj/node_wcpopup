@@ -18,7 +18,7 @@ declare namespace PopupMenu {
         submenu?:MenuItem[];
         value?:any;
         name?:string;
-        onClick?:Function;
+        click?:Function;
     }
 
     type Theme = "dark" | "light" | "system";
