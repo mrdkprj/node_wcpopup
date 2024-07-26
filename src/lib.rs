@@ -31,12 +31,16 @@ pub fn build_from_template_with_theme(mut cx: FunctionContext) -> JsResult<JsNum
     let templates = cx.argument::<JsArray>(1)?.to_vec(&mut cx).unwrap();
     let theme_str = cx.argument::<JsString>(2)?.value(&mut cx);
 
-    let mut config = Config::default();
-    config.theme = match theme_str.as_str() {
+    let theme = match theme_str.as_str() {
         "dark" => Theme::Dark,
         "light" => Theme::Light,
         "system" => Theme::System,
         _ => Theme::System,
+    };
+
+    let config = Config {
+        theme,
+        ..Default::default()
     };
 
     let hwnd = build(&mut cx, parent, templates, config);

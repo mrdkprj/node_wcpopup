@@ -131,7 +131,7 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
     }
 }
 
-pub fn extract_item<'a, C: Context<'a>>(vec: &Vec<MenuItem>, cx: &mut C) -> JsResult<'a, JsArray> {
+pub fn extract_item<'a, C: Context<'a>>(vec: &[MenuItem], cx: &mut C) -> JsResult<'a, JsArray> {
     let items = JsArray::new(cx, vec.len());
     for (index, item) in vec.iter().enumerate() {
         if item.menu_item_type == MenuItemType::Submenu {
@@ -281,9 +281,9 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     size.set(cx, "itemVerticalPadding", a)?;
     let a = cx.number(config.size.item_horizontal_padding);
     size.set(cx, "itemHorizontalPadding", a)?;
-    let a = cx.number(config.size.font_size.unwrap_or_else(|| 0));
+    let a = cx.number(config.size.font_size.unwrap_or(0));
     size.set(cx, "fontSize", a)?;
-    let a = cx.number(config.size.font_weight.unwrap_or_else(|| 0));
+    let a = cx.number(config.size.font_weight.unwrap_or(0));
     size.set(cx, "fontWeight", a)?;
 
     configjs.set(cx, "size", size)?;

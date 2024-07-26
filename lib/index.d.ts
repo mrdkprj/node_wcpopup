@@ -18,6 +18,7 @@ declare namespace PopupMenu {
         submenu?:MenuItem[];
         value?:any;
         name?:string;
+        onClick?:Function;
     }
 
     type Theme = "dark" | "light" | "system";
@@ -59,8 +60,8 @@ declare namespace PopupMenu {
         buildFromTemplate(hwnd:number, template:MenuItem[]): void;
         buildFromTemplateWithTheme(hwnd:number, template:MenuItem[], theme:Theme): void;
         buildFromTemplateWithConfig(hwnd:number, template:MenuItem[], config:Config): void;
-        popup(x:number, y:number): Promise<SelectedMenuItem>;
-        popupSync(x:number, y:number): SelectedMenuItem;
+        popup(x:number, y:number): Promise<void>;
+        popupSync(x:number, y:number): void;
         items():MenuItem[];
         remove(index:number):MenuItem;
         append(item:MenuItem):void;

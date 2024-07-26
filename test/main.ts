@@ -16,6 +16,7 @@ const createWindow = () => {
     }
   })
 
+
   win.loadFile('index.html')
 
   // const win2 = new BrowserWindow({
