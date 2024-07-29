@@ -3,14 +3,13 @@
   "version": "0.0.8",
   "description": "",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
     "install": "npm run build-release",
     "build": "cargo-cp-artifact -nc ./build/index.node -- cargo build --message-format=json-render-diagnostics",
     "build-debug": "npm run build --",
-    "build-release": "npm run build -- --release",
+    "build-release": "tsc ./lib/index.ts && npm run build -- --release",
     "package": "node-pre-gyp package",
-    "tsc": "tsc ./lib/index.ts --esModuleInterop --lib ES2015,dom"
+    "testbuild": "tsc ./lib/index.ts --esModuleInterop --lib ES2015,dom"
   },
   "author": "mrdkprj",
   "license": "MIT",

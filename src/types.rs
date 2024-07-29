@@ -5,7 +5,7 @@ use neon::{
     types::{JsArray, JsBoolean, JsNumber, JsObject, JsString},
 };
 use wcpopup::{
-    ColorScheme, Config, Corner, MenuItem, MenuItemType, MenuSize, SelectedMenuItem, Theme,
+    ColorScheme, Config, Corner, Menu, MenuItem, MenuItemType, MenuSize, MenuType, Theme,
     ThemeColor,
 };
 
@@ -160,6 +160,9 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
     let value = cx.string(item.value.clone());
     obj.set(cx, "value", value)?;
 
+    let accelerator = cx.string(item.accelerator.clone());
+    obj.set(cx, "accelerator", accelerator)?;
+
     let name = cx.string(item.name.clone());
     obj.set(cx, "name", name)?;
 
@@ -169,29 +172,41 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
     let enabled = cx.boolean(!item.disabled());
     obj.set(cx, "enabled", enabled)?;
 
+    let uuid = cx.number(item.uuid);
+    obj.set(cx, "uuid", uuid)?;
+
+    let menu_item_type_str = match item.menu_item_type {
+        MenuItemType::Text => "normal",
+        MenuItemType::Separator => "separator",
+        MenuItemType::Submenu => "submenu",
+        MenuItemType::Checkbox => "checkbox",
+        MenuItemType::Radio => "radio",
+    };
+    let menu_item_type_str = cx.string(menu_item_type_str);
+    obj.set(cx, "type", menu_item_type_str)?;
+
+    let submenu = if item.submenu.is_some() {
+        from_menu(cx, item.submenu.as_ref().unwrap())?
+    } else {
+        cx.empty_object()
+    };
+    obj.set(cx, "submenu", submenu)?;
+
     Ok(obj)
 }
 
-pub fn from_selected_item<'a, C: Context<'a>>(
-    cx: &mut C,
-    item: &SelectedMenuItem,
-) -> JsResult<'a, JsObject> {
+pub fn from_menu<'a, C: Context<'a>>(cx: &mut C, menu: &Menu) -> JsResult<'a, JsObject> {
     let obj = cx.empty_object();
 
-    let id = cx.string(item.id.clone());
-    obj.set(cx, "id", id)?;
+    let hwnd = cx.number(menu.hwnd.0 as f64);
+    obj.set(cx, "hwnd", hwnd)?;
 
-    let label = cx.string(item.label.clone());
-    obj.set(cx, "label", label)?;
-
-    let value = cx.string(item.value.clone());
-    obj.set(cx, "value", value)?;
-
-    let name = cx.string(item.name.clone());
-    obj.set(cx, "name", name)?;
-
-    let checked = cx.boolean(item.checked);
-    obj.set(cx, "checked", checked)?;
+    let type_str = match menu.menu_type {
+        MenuType::Main => "main",
+        MenuType::Submenu => "submenu",
+    };
+    let menu_type = cx.string(type_str);
+    obj.set(cx, "type", menu_type)?;
 
     Ok(obj)
 }
@@ -205,8 +220,10 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
     };
 
     let size_obj = value.get::<JsObject, _, _>(cx, "size").unwrap();
-    let font_size = to_i32(cx, &size_obj, "fontSize");
-    let font_weight = to_i32(cx, &size_obj, "fontWeight");
+    let dark_font_size = to_i32(cx, &size_obj, "darkFontSize");
+    let dark_font_weight = to_i32(cx, &size_obj, "darkFontWeight");
+    let light_font_size = to_i32(cx, &size_obj, "lightFontSize");
+    let light_font_weight = to_i32(cx, &size_obj, "lightFontWeight");
 
     let size = MenuSize {
         border_size: to_i32(cx, &size_obj, "borderSize"),
@@ -214,9 +231,23 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         horizontal_margin: to_i32(cx, &size_obj, "horizontalMargin"),
         item_vertical_padding: to_i32(cx, &size_obj, "itemVerticalPadding"),
         item_horizontal_padding: to_i32(cx, &size_obj, "itemHorizontalPadding"),
-        font_size: if font_size > 0 { Some(font_size) } else { None },
-        font_weight: if font_weight > 0 {
-            Some(font_weight)
+        dark_font_size: if dark_font_size > 0 {
+            Some(dark_font_size)
+        } else {
+            None
+        },
+        dark_font_weight: if dark_font_weight > 0 {
+            Some(dark_font_weight)
+        } else {
+            None
+        },
+        light_font_size: if light_font_size > 0 {
+            Some(light_font_size)
+        } else {
+            None
+        },
+        light_font_weight: if light_font_weight > 0 {
+            Some(light_font_weight)
         } else {
             None
         },
@@ -228,6 +259,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
 
     let dark = ColorScheme {
         color: to_i32(cx, &dark_color_scheme_obj, "color") as u32,
+        accelerator: to_i32(cx, &dark_color_scheme_obj, "accelerator") as u32,
         border: to_i32(cx, &dark_color_scheme_obj, "border") as u32,
         disabled: to_i32(cx, &dark_color_scheme_obj, "disabled") as u32,
         background_color: to_i32(cx, &dark_color_scheme_obj, "backgroundColor") as u32,
@@ -236,6 +268,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
 
     let light = ColorScheme {
         color: to_i32(cx, &light_color_scheme_obj, "color") as u32,
+        accelerator: to_i32(cx, &light_color_scheme_obj, "accelerator") as u32,
         border: to_i32(cx, &light_color_scheme_obj, "border") as u32,
         disabled: to_i32(cx, &light_color_scheme_obj, "disabled") as u32,
         background_color: to_i32(cx, &light_color_scheme_obj, "backgroundColor") as u32,
@@ -281,10 +314,14 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     size.set(cx, "itemVerticalPadding", a)?;
     let a = cx.number(config.size.item_horizontal_padding);
     size.set(cx, "itemHorizontalPadding", a)?;
-    let a = cx.number(config.size.font_size.unwrap_or(0));
-    size.set(cx, "fontSize", a)?;
-    let a = cx.number(config.size.font_weight.unwrap_or(0));
-    size.set(cx, "fontWeight", a)?;
+    let a = cx.number(config.size.dark_font_size.unwrap_or(0));
+    size.set(cx, "darkFontSize", a)?;
+    let a = cx.number(config.size.dark_font_weight.unwrap_or(0));
+    size.set(cx, "darkFontWeight", a)?;
+    let a = cx.number(config.size.light_font_size.unwrap_or(0));
+    size.set(cx, "lightFontSize", a)?;
+    let a = cx.number(config.size.light_font_weight.unwrap_or(0));
+    size.set(cx, "lightFontWeight", a)?;
 
     configjs.set(cx, "size", size)?;
 
@@ -292,6 +329,8 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     let dark = cx.empty_object();
     let a = cx.number(config.color.dark.color);
     dark.set(cx, "color", a)?;
+    let a = cx.number(config.color.dark.accelerator);
+    dark.set(cx, "accelerator", a)?;
     let a = cx.number(config.color.dark.border);
     dark.set(cx, "border", a)?;
     let a = cx.number(config.color.dark.disabled);
@@ -305,6 +344,8 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     let light = cx.empty_object();
     let a = cx.number(config.color.light.color);
     light.set(cx, "color", a)?;
+    let a = cx.number(config.color.light.accelerator);
+    light.set(cx, "accelerator", a)?;
     let a = cx.number(config.color.light.border);
     light.set(cx, "border", a)?;
     let a = cx.number(config.color.light.disabled);

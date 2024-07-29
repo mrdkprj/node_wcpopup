@@ -83,8 +83,8 @@ fn build(
     let mut builder = MenuBuilder::new_from_config(hwnd, config);
 
     build_menu(&mut builder, &items);
-
     let menu = builder.build().unwrap();
+
     let mut map = MENU_MAP.try_lock().unwrap();
     let inner = menu.hwnd.0;
     (*map).insert(inner as i32, menu);
@@ -112,9 +112,12 @@ fn build_menu(builder: &mut MenuBuilder, items: &Vec<ElectronMenuItem>) {
                 builder.separator();
             }
             "submenu" => {
-                let mut parent = builder.submenu(&item.label, disabled);
+                let mut parent = builder.submenu(&item.id, &item.label, disabled);
                 build_menu(&mut parent, &item.submenu);
-                parent.build().unwrap();
+                let submenu = parent.build().unwrap();
+                let mut map = MENU_MAP.try_lock().unwrap();
+                (*map).insert(submenu.hwnd.0 as i32, submenu);
+                std::mem::drop(map);
             }
             "checkbox" => {
                 if item.accelerator.is_empty() {
@@ -162,7 +165,7 @@ pub fn popup(mut cx: FunctionContext) -> JsResult<JsPromise> {
         return cx.throw_error("Invalid number of arguments");
     }
 
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let x = cx.argument::<JsNumber>(1)?.value(&mut cx);
     let y = cx.argument::<JsNumber>(2)?.value(&mut cx);
 
@@ -171,11 +174,11 @@ pub fn popup(mut cx: FunctionContext) -> JsResult<JsPromise> {
 
     async_std::task::spawn(async move {
         let map = MENU_MAP.lock().await;
-        let menu = map.get(&(id as i32)).unwrap();
+        let menu = map.get(&(hwnd as i32)).unwrap();
         let x = menu.popup_at_async(x as i32, y as i32).await;
 
         deferred.settle_with(&channel, |mut cx| match x {
-            Some(data) => from_selected_item(&mut cx, &data),
+            Some(data) => from_menu_item(&mut cx, &data),
             None => Ok(cx.empty_object()),
         });
     });
@@ -188,16 +191,16 @@ pub fn popup_sync(mut cx: FunctionContext) -> JsResult<JsObject> {
         return cx.throw_error("Invalid number of arguments");
     }
 
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let x = cx.argument::<JsNumber>(1)?.value(&mut cx);
     let y = cx.argument::<JsNumber>(2)?.value(&mut cx);
 
     let map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get(&(id as i32)).unwrap();
+    let menu = map.get(&(hwnd as i32)).unwrap();
     let x = menu.popup_at(x as i32, y as i32);
 
     let result = match x {
-        Some(data) => from_selected_item(&mut cx, &data),
+        Some(data) => from_menu_item(&mut cx, &data),
         None => Ok(cx.empty_object()),
     };
 
@@ -205,31 +208,31 @@ pub fn popup_sync(mut cx: FunctionContext) -> JsResult<JsObject> {
 }
 
 pub fn items(mut cx: FunctionContext) -> JsResult<JsArray> {
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get(&(id as i32)).unwrap();
+    let menu = map.get(&(hwnd as i32)).unwrap();
     let items = extract_item(&menu.items(), &mut cx)?;
 
     Ok(items)
 }
 
-pub fn remove(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+pub fn remove_at(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let index = cx.argument::<JsNumber>(1)?.value(&mut cx);
 
     let mut map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get_mut(&(id as i32)).unwrap();
-    menu.remove(index as u32);
+    let menu = map.get_mut(&(hwnd as i32)).unwrap();
+    menu.remove_at(index as u32);
 
     Ok(cx.undefined())
 }
 
 pub fn append(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let jsitem = cx.argument::<JsObject>(1)?;
 
     let mut map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get_mut(&(id as i32)).unwrap();
+    let menu = map.get_mut(&(hwnd as i32)).unwrap();
     let item = to_menu_item(&mut cx, jsitem);
     menu.append(item);
 
@@ -237,16 +240,29 @@ pub fn append(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 }
 
 pub fn insert(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let id = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let index = cx.argument::<JsNumber>(1)?.value(&mut cx);
     let jsitem = cx.argument::<JsObject>(2)?;
 
     let mut map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get_mut(&(id as i32)).unwrap();
+    let menu = map.get_mut(&(hwnd as i32)).unwrap();
     let item = to_menu_item(&mut cx, jsitem);
     menu.insert(item, index as u32);
 
     Ok(cx.undefined())
+}
+
+pub fn get_menu_item_by_id(mut cx: FunctionContext) -> JsResult<JsObject> {
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let id = cx.argument::<JsString>(1)?.value(&mut cx);
+
+    let map = MENU_MAP.try_lock().unwrap();
+    let menu = map.get(&(hwnd as i32)).unwrap();
+    if let Some(item) = menu.get_menu_item_by_id(id.as_str()) {
+        from_menu_item(&mut cx, &item)
+    } else {
+        Ok(cx.empty_object())
+    }
 }
 
 pub fn get_default_config(mut cx: FunctionContext) -> JsResult<JsObject> {
@@ -283,10 +299,11 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("popup", popup)?;
     cx.export_function("popupSync", popup_sync)?;
     cx.export_function("items", items)?;
-    cx.export_function("remove", remove)?;
+    cx.export_function("removeAt", remove_at)?;
     cx.export_function("append", append)?;
     cx.export_function("insert", insert)?;
     cx.export_function("getDefaultConfig", get_default_config)?;
     cx.export_function("setTheme", set_theme)?;
+    cx.export_function("getMenuItemById", get_menu_item_by_id)?;
     Ok(())
 }

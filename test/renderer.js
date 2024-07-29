@@ -8,10 +8,10 @@ window.addEventListener("keydown", _ => {
 
 window.addEventListener("click", e => {
     if (e.target.id == "btn"){
-        toggle();
+        window.electronAPI.toggle();
+    }
+
+    if (e.target.id == "append"){
+        window.electronAPI.append();
     }
 })
-
-const toggle = () => {
-    window.electronAPI.toggle();
-}

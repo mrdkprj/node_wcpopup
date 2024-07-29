@@ -1,7 +1,7 @@
 import { app, BrowserWindow,ipcMain, nativeTheme } from "electron";
 import os from "os"
 import path from "path";
-import { Menu, MenuItem } from "../lib/index"
+import {getDefaultConfig, Menu, MenuItem, MenuItemConstructorOptions} from "../lib/index";
 
 let menu:Menu;
 let dark = true;
@@ -19,20 +19,20 @@ const createWindow = () => {
 
   win.loadFile('index.html')
 
-  // const win2 = new BrowserWindow({
-  //   title:"sub",
-  //   parent:win,
-  //   width: 800,
-  //   height: 600,
-  //   webPreferences: {
-  //       preload: path.join(__dirname, 'preload.js')
-  //   }
-  // })
+  const win2 = new BrowserWindow({
+    title:"sub",
+    parent:win,
+    width: 800,
+    height: 600,
+    webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+    }
+  })
 
-  // win2.loadFile('index2.html')
+  win2.loadFile('index2.html')
 
   menu = new Menu();
-  const hbuf = win.getNativeWindowHandle();
+  const hbuf = win2.getNativeWindowHandle();
   let hwnd = 0;
   if (os.endianness() == "LE") {
       hwnd = hbuf.readInt32LE()
@@ -40,17 +40,15 @@ const createWindow = () => {
   else {
       hwnd = hbuf.readInt32BE()
   }
-  let config = menu.getDefaultConfig();
+  let config = getDefaultConfig();
   config.theme = "dark"
   config.size.itemVerticalPadding = 15;
   menu.buildFromTemplateWithConfig(hwnd, getTemp(), config)
 
-  menu.append({accelerator:"F1", label:"Test"});
 }
 
 const handleSetTitle = async (_event:any, pos:any) => {
-  const x = await menu.popup(pos.x, pos.y);
-  console.log(x)
+  await menu.popup(pos.x, pos.y);
 }
 
 const toggle = () => {
@@ -59,33 +57,52 @@ const toggle = () => {
   menu.setTheme(nativeTheme.themeSource);
 }
 
+let apflg = true;
+const append = () => {
+  apflg = !apflg;
+  if(apflg){
+    menu.append({accelerator:"F1", label:"Test fro main", click:callback,});
+  }else{
+    const submenu = menu.getMenuItemById("theme");
+    if(submenu && submenu.submenu){
+      menu.appendTo(submenu.submenu.hwnd, {accelerator:"F2", label:"Test for sub", click:callback,})
+    }
+  }
+}
+
 app.whenReady().then(async () => {
   createWindow()
   ipcMain.on('set-title', handleSetTitle)
   ipcMain.on('toggle', toggle)
+  ipcMain.on('append', append)
 })
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
 
+const callback = (a:MenuItem) => {
+  console.log(a)
+}
+
 const getTemp = () => {
-  const template:MenuItem[] = [
+  const template:MenuItemConstructorOptions[] = [
     {
       id:"",
         label: t("playbackSpeed"),
-        submenu: playbackSpeedMenu()
+        submenu: playbackSpeedMenu(),
     },
     {
       id:"",
         label: t("seekSpeed"),
-        submenu: seekSpeedMenu()
+        submenu: seekSpeedMenu(),
     },
     {
       id:"",
         label: t("fitToWindow"),
         type: "checkbox",
         checked: false,
+        click:callback,
     },
     { type: "separator" },
     {
@@ -93,25 +110,30 @@ const getTemp = () => {
         //label: t("playlist"),
         label: t("playbackSpeed"),
         //accelerator: "CmdOrCtrl+P",
+
+        click:callback,
     },
     {
       id:"",
         label: t("fullscreen"),
         accelerator:"F11",
+        click:callback,
     },
     {
       id:"",
         label: t("pip"),
+        click:callback,
     },
     {      id:"", type: "separator" },
     {
       id:"",
         label: t("capture"),
         //accelerator: "CmdOrCtrl+S",
+        click:callback,
     },
     {      id:"", type: "separator" },
     {
-      id:"",
+      id:"theme",
         label: t("theme"),
         submenu: themeMenu()
     },
@@ -122,19 +144,21 @@ const getTemp = () => {
 
 const themeMenu = () => {
 
-  const template:MenuItem[] = [
+  const template:MenuItemConstructorOptions[] = [
     {
-        id: "themeLight",
+        id: "themelight",
         label: t("light"),
         type:"checkbox",
         checked: false,
+        click:callback,
         value:"light"
     },
     {
-        id: "themeDark",
+        id: "themedark",
         label: t("dark"),
         type:"checkbox",
         checked: true,
+        click:callback,
         value:"dark"
     },
   ]
@@ -145,29 +169,33 @@ const themeMenu = () => {
 const playbackSpeedMenu = () => {
 
   const type = "PlaybackSpeed"
-  const template:MenuItem[] = [
+  const template:MenuItemConstructorOptions[] = [
     {
         id: "playbackrate0",
         label:"0.25",
         type:"checkbox",
+        click:callback,
         value:0.25
     },
     {
         id: "playbackrate1",
         label:"0.5",
         type:"checkbox",
+        click:callback,
         value:0.5
     },
     {
         id: "playbackrate2",
         label:"0.75",
         type:"checkbox",
+        click:callback,
         value:0.75
     },
     {
         id: "playbackrate3",
         label:`1 - ${t("default")}`,
         type:"checkbox",
+        click:callback,
         checked:true,
         value:1
     },
@@ -175,24 +203,28 @@ const playbackSpeedMenu = () => {
         id: "playbackrate4",
         label:"1.25",
         type:"checkbox",
+        click:callback,
         value:1.25
     },
     {
         id: "playbackrate5",
         label:"1.5",
         type:"checkbox",
+        click:callback,
         value:1.5
     },
     {
         id: "playbackrate6",
         label:"1.75",
         type:"checkbox",
+        click:callback,
         value:1.75
     },
     {
         id: "playbackrate7",
         label:"2",
         type:"checkbox",
+        click:callback,
         value:2
     },
   ]
@@ -203,7 +235,7 @@ const playbackSpeedMenu = () => {
 const seekSpeedMenu = () => {
 
 
-  const template:MenuItem[] = [
+  const template:MenuItemConstructorOptions[] = [
     {
         id: "seekspeed0",
         label:`0.03${t("second")}`,
