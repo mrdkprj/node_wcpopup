@@ -6,15 +6,18 @@
   "scripts": {
     "install": "npm run build-release",
     "build": "cargo-cp-artifact -nc ./build/index.node -- cargo build --message-format=json-render-diagnostics",
-    "build-debug": "npm run build --",
-    "build-release": "tsc ./lib/index.ts && npm run build -- --release",
-    "package": "node-pre-gyp package",
-    "testbuild": "tsc ./lib/index.ts --esModuleInterop --lib ES2015,dom"
+    "build-debug": "tsc ./lib/index.ts && npm run build -- --release",
+    "build-release": "npm run build -- --release"
   },
   "author": "mrdkprj",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "cargo-cp-artifact": "^0.1.9",
+    "eslint": "^9.8.0",
+    "prettier": "3.3.3",
     "typescript": "^5.3.3"
   },
   "dependencies": {}

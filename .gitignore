@@ -2,8 +2,7 @@ target
 **/node_modules
 **/.DS_Store
 npm-debug.log*
-build
-ref
+build/index.node
 .vscode
 /wcpopup
 cargo.log

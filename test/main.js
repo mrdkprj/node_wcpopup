@@ -52,20 +52,20 @@ var createWindow = function () {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path_1.default.join(__dirname, 'preload.js')
-        }
+            preload: path_1.default.join(__dirname, "preload.js"),
+        },
     });
-    win.loadFile('index.html');
+    win.loadFile("index.html");
     var win2 = new electron_1.BrowserWindow({
         title: "sub",
         parent: win,
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path_1.default.join(__dirname, 'preload.js')
-        }
+            preload: path_1.default.join(__dirname, "preload.js"),
+        },
     });
-    win2.loadFile('index2.html');
+    win2.loadFile("index2.html");
     menu = new index_1.Menu();
     var hbuf = win2.getNativeWindowHandle();
     var hwnd = 0;
@@ -99,26 +99,34 @@ var apflg = true;
 var append = function () {
     apflg = !apflg;
     if (apflg) {
-        menu.append({ accelerator: "F1", label: "Test fro main", click: callback, });
+        menu.append({
+            accelerator: "F1",
+            label: "Test fro main",
+            click: callback,
+        });
     }
     else {
         var submenu = menu.getMenuItemById("theme");
         if (submenu && submenu.submenu) {
-            menu.appendTo(submenu.submenu.hwnd, { accelerator: "F2", label: "Test for sub", click: callback, });
+            menu.appendTo(submenu.submenu.hwnd, {
+                accelerator: "F2",
+                label: "Test for sub",
+                click: callback,
+            });
         }
     }
 };
 electron_1.app.whenReady().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         createWindow();
-        electron_1.ipcMain.on('set-title', handleSetTitle);
-        electron_1.ipcMain.on('toggle', toggle);
-        electron_1.ipcMain.on('append', append);
+        electron_1.ipcMain.on("set-title", handleSetTitle);
+        electron_1.ipcMain.on("toggle", toggle);
+        electron_1.ipcMain.on("append", append);
         return [2 /*return*/];
     });
 }); });
-electron_1.app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin')
+electron_1.app.on("window-all-closed", function () {
+    if (process.platform !== "darwin")
         electron_1.app.quit();
 });
 var callback = function (a) {
@@ -173,7 +181,7 @@ var getTemp = function () {
         {
             id: "theme",
             label: t("theme"),
-            submenu: themeMenu()
+            submenu: themeMenu(),
         },
     ];
     return template;
@@ -186,7 +194,7 @@ var themeMenu = function () {
             type: "checkbox",
             checked: false,
             click: callback,
-            value: "light"
+            value: "light",
         },
         {
             id: "themedark",
@@ -194,34 +202,33 @@ var themeMenu = function () {
             type: "checkbox",
             checked: true,
             click: callback,
-            value: "dark"
+            value: "dark",
         },
     ];
     return template;
 };
 var playbackSpeedMenu = function () {
-    var type = "PlaybackSpeed";
     var template = [
         {
             id: "playbackrate0",
             label: "0.25",
             type: "checkbox",
             click: callback,
-            value: 0.25
+            value: 0.25,
         },
         {
             id: "playbackrate1",
             label: "0.5",
             type: "checkbox",
             click: callback,
-            value: 0.5
+            value: 0.5,
         },
         {
             id: "playbackrate2",
             label: "0.75",
             type: "checkbox",
             click: callback,
-            value: 0.75
+            value: 0.75,
         },
         {
             id: "playbackrate3",
@@ -229,35 +236,35 @@ var playbackSpeedMenu = function () {
             type: "checkbox",
             click: callback,
             checked: true,
-            value: 1
+            value: 1,
         },
         {
             id: "playbackrate4",
             label: "1.25",
             type: "checkbox",
             click: callback,
-            value: 1.25
+            value: 1.25,
         },
         {
             id: "playbackrate5",
             label: "1.5",
             type: "checkbox",
             click: callback,
-            value: 1.5
+            value: 1.5,
         },
         {
             id: "playbackrate6",
             label: "1.75",
             type: "checkbox",
             click: callback,
-            value: 1.75
+            value: 1.75,
         },
         {
             id: "playbackrate7",
             label: "2",
             type: "checkbox",
             click: callback,
-            value: 2
+            value: 2,
         },
     ];
     return template;
@@ -268,56 +275,56 @@ var seekSpeedMenu = function () {
             id: "seekspeed0",
             label: "0.03".concat(t("second")),
             type: "checkbox",
-            value: 0.03
+            value: 0.03,
         },
         {
             id: "seekspeed1",
             label: "0.05".concat(t("second")),
             type: "checkbox",
-            value: 0.05
+            value: 0.05,
         },
         {
             id: "seekspeed2",
             label: "0.1".concat(t("second")),
             type: "checkbox",
-            value: 0.1
+            value: 0.1,
         },
         {
             id: "seekspeed3",
             label: "0.5".concat(t("second")),
             type: "checkbox",
-            value: 0.5
+            value: 0.5,
         },
         {
             id: "seekspeed4",
             label: "1".concat(t("second")),
             type: "checkbox",
-            value: 1
+            value: 1,
         },
         {
             id: "seekspeed5",
             label: "3".concat(t("second")),
             type: "checkbox",
-            value: 3
+            value: 3,
         },
         {
             id: "seekspeed6",
             label: "5".concat(t("second"), " - ").concat(t("default")),
             type: "checkbox",
             checked: true,
-            value: 5
+            value: 5,
         },
         {
             id: "seekspeed7",
             label: "10".concat(t("second")),
             type: "checkbox",
-            value: 10
+            value: 10,
         },
         {
             id: "seekspeed8",
             label: "20".concat(t("second")),
             type: "checkbox",
-            value: 20
+            value: 20,
         },
     ];
     return template;
