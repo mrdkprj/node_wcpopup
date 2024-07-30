@@ -10,7 +10,7 @@ const createWindow = () => {
     const win = new BrowserWindow({
         title: "main",
         width: 800,
-        height: 600,
+        height: 601,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
         },
@@ -22,7 +22,7 @@ const createWindow = () => {
         title: "sub",
         parent: win,
         width: 800,
-        height: 600,
+        height: 601,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
         },
@@ -75,11 +75,17 @@ const append = () => {
     }
 };
 
+const reload = () => {
+    app.relaunch();
+    app.exit(0);
+};
+
 app.whenReady().then(async () => {
     createWindow();
     ipcMain.on("set-title", handleSetTitle);
     ipcMain.on("toggle", toggle);
     ipcMain.on("append", append);
+    ipcMain.on("reload", reload);
 });
 
 app.on("window-all-closed", () => {

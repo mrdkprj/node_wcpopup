@@ -17,7 +17,6 @@
     "@typescript-eslint/parser": "^7.18.0",
     "cargo-cp-artifact": "^0.1.9",
     "eslint": "^9.8.0",
-    "prettier": "3.3.3",
     "typescript": "^5.3.3"
   },
   "dependencies": {}

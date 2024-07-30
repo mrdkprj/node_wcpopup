@@ -50,7 +50,7 @@ var createWindow = function () {
     var win = new electron_1.BrowserWindow({
         title: "main",
         width: 800,
-        height: 600,
+        height: 601,
         webPreferences: {
             preload: path_1.default.join(__dirname, "preload.js"),
         },
@@ -60,7 +60,7 @@ var createWindow = function () {
         title: "sub",
         parent: win,
         width: 800,
-        height: 600,
+        height: 601,
         webPreferences: {
             preload: path_1.default.join(__dirname, "preload.js"),
         },
@@ -116,12 +116,17 @@ var append = function () {
         }
     }
 };
+var reload = function () {
+    electron_1.app.relaunch();
+    electron_1.app.exit(0);
+};
 electron_1.app.whenReady().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         createWindow();
         electron_1.ipcMain.on("set-title", handleSetTitle);
         electron_1.ipcMain.on("toggle", toggle);
         electron_1.ipcMain.on("append", append);
+        electron_1.ipcMain.on("reload", reload);
         return [2 /*return*/];
     });
 }); });

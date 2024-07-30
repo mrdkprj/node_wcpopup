@@ -14,4 +14,9 @@ window.addEventListener("click", e => {
     if (e.target.id == "append"){
         window.electronAPI.append();
     }
+
+    if (e.target.id == "reload"){
+        window.electronAPI.reload();
+    }
+
 })
