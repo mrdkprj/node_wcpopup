@@ -4,10 +4,7 @@ use neon::{
     result::JsResult,
     types::{JsArray, JsBoolean, JsNumber, JsObject, JsString},
 };
-use wcpopup::{
-    ColorScheme, Config, Corner, Menu, MenuItem, MenuItemType, MenuSize, MenuType, Theme,
-    ThemeColor,
-};
+use wcpopup::{ColorScheme, Config, Corner, Menu, MenuItem, MenuItemType, MenuSize, MenuType, Theme, ThemeColor};
 
 #[derive(Debug)]
 pub struct ElectronMenuItem {
@@ -15,8 +12,6 @@ pub struct ElectronMenuItem {
     pub label: String,
     pub accelerator: String,
     pub enabled: bool,
-    #[allow(dead_code)]
-    pub visible: bool,
     pub checked: bool,
     pub submenu: Vec<ElectronMenuItem>,
     pub id: String,
@@ -31,7 +26,6 @@ impl ElectronMenuItem {
             label: to_string(cx, &value, "label"),
             accelerator: to_string(cx, &value, "accelerator"),
             enabled: to_bool(cx, &value, "enabled", true),
-            visible: to_bool(cx, &value, "visible", true),
             checked: to_bool(cx, &value, "checked", false),
             submenu: value
                 .get_opt::<JsArray, _, _>(cx, "submenu")
@@ -54,27 +48,15 @@ impl ElectronMenuItem {
 }
 
 pub fn to_string(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> String {
-    value
-        .get_opt::<JsString, _, _>(cx, key)
-        .unwrap()
-        .unwrap_or_else(|| JsString::new(cx, ""))
-        .value(cx)
+    value.get_opt::<JsString, _, _>(cx, key).unwrap().unwrap_or_else(|| JsString::new(cx, "")).value(cx)
 }
 
 pub fn to_bool(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str, def: bool) -> bool {
-    value
-        .get_opt::<JsBoolean, _, _>(cx, key)
-        .unwrap()
-        .unwrap_or_else(|| JsBoolean::new(cx, def))
-        .value(cx)
+    value.get_opt::<JsBoolean, _, _>(cx, key).unwrap().unwrap_or_else(|| JsBoolean::new(cx, def)).value(cx)
 }
 
 pub fn to_i32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> i32 {
-    value
-        .get_opt::<JsNumber, _, _>(cx, key)
-        .unwrap()
-        .unwrap_or_else(|| JsNumber::new(cx, 0))
-        .value(cx) as i32
+    value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as i32
 }
 
 pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuItem {
@@ -91,13 +73,13 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
     } else {
         Some(accelerator_str.as_str())
     };
-    let disabled = if enabled { None } else { Some(true) };
+    let disabled = if enabled {
+        None
+    } else {
+        Some(true)
+    };
 
-    let item_type_str = value
-        .get_opt::<JsString, _, _>(cx, "type")
-        .unwrap()
-        .unwrap_or_else(|| JsString::new(cx, ""))
-        .value(cx);
+    let item_type_str = value.get_opt::<JsString, _, _>(cx, "type").unwrap().unwrap_or_else(|| JsString::new(cx, "")).value(cx);
 
     let menu_item_type = match item_type_str.as_str() {
         "normal" => MenuItemType::Text,
@@ -109,25 +91,11 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
     };
 
     match menu_item_type {
-        MenuItemType::Text => {
-            MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled)
-        }
+        MenuItemType::Text => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
         MenuItemType::Separator => MenuItem::new_separator(),
-        MenuItemType::Submenu => {
-            MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled)
-        }
-        MenuItemType::Checkbox => {
-            MenuItem::new_check_item(&id, &label, &item_value, accelerator, checked, disabled)
-        }
-        MenuItemType::Radio => MenuItem::new_radio_item(
-            &id,
-            &label,
-            &item_value,
-            &name,
-            accelerator,
-            checked,
-            disabled,
-        ),
+        MenuItemType::Submenu => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
+        MenuItemType::Checkbox => MenuItem::new_check_item(&id, &label, &item_value, accelerator, checked, disabled),
+        MenuItemType::Radio => MenuItem::new_radio_item(&id, &label, &item_value, &name, accelerator, checked, disabled),
     }
 }
 
@@ -275,7 +243,10 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         hover_background_color: to_i32(cx, &light_color_scheme_obj, "hoverBackgroundColor") as u32,
     };
 
-    let color = ThemeColor { dark, light };
+    let color = ThemeColor {
+        dark,
+        light,
+    };
 
     let corner = if to_string(cx, &value, "corner") == "Round" {
         Corner::Round

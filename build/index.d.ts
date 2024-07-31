@@ -8,7 +8,6 @@ declare namespace PopupMenu {
         label: string;
         accelerator: string;
         enabled: boolean;
-        visible: boolean;
         checked: boolean;
         submenu: Menu;
         value: any;

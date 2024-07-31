@@ -8,7 +8,6 @@ export type MenuItemConstructorOptions = {
     label?: string;
     accelerator?: string;
     enabled?: boolean;
-    visible?: boolean;
     checked?: boolean;
     submenu?: MenuItemConstructorOptions[] | Menu;
     value?: any;
@@ -22,7 +21,6 @@ export type MenuItem = {
     label?: string;
     accelerator?: string;
     enabled?: boolean;
-    visible?: boolean;
     checked?: boolean;
     submenu?: Menu;
     value?: any;

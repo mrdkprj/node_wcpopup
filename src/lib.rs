@@ -1,5 +1,10 @@
 use async_std::sync::Mutex;
-use neon::prelude::*;
+use neon::{
+    handle::Handle,
+    prelude::{Context, FunctionContext, ModuleContext},
+    result::{JsResult, NeonResult},
+    types::{JsArray, JsNumber, JsObject, JsPromise, JsString, JsUndefined, JsValue},
+};
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use wcpopup::{Config, Menu, MenuBuilder, Theme};
@@ -65,12 +70,7 @@ pub fn build_from_template_with_config(mut cx: FunctionContext) -> JsResult<JsNu
     Ok(id)
 }
 
-fn build(
-    cx: &mut FunctionContext,
-    parent: f64,
-    templates: Vec<Handle<JsValue>>,
-    config: Config,
-) -> isize {
+fn build(cx: &mut FunctionContext, parent: f64, templates: Vec<Handle<JsValue>>, config: Config) -> isize {
     let items: Vec<ElectronMenuItem> = templates
         .into_iter()
         .map(|value| {
@@ -94,18 +94,17 @@ fn build(
 
 fn build_menu(builder: &mut MenuBuilder, items: &Vec<ElectronMenuItem>) {
     for item in items {
-        let disabled = if item.enabled { None } else { Some(false) };
+        let disabled = if item.enabled {
+            None
+        } else {
+            Some(false)
+        };
         match item.itype.as_str() {
             "normal" => {
                 if item.accelerator.is_empty() {
                     builder.text(&item.id, &item.label, disabled);
                 } else {
-                    builder.text_with_accelerator(
-                        &item.id,
-                        &item.label,
-                        disabled,
-                        &item.accelerator,
-                    );
+                    builder.text_with_accelerator(&item.id, &item.label, disabled, &item.accelerator);
                 }
             }
             "separator" => {
@@ -123,36 +122,14 @@ fn build_menu(builder: &mut MenuBuilder, items: &Vec<ElectronMenuItem>) {
                 if item.accelerator.is_empty() {
                     builder.check(&item.id, &item.label, &item.value, item.checked, disabled);
                 } else {
-                    builder.check_with_accelerator(
-                        &item.id,
-                        &item.label,
-                        &item.value,
-                        item.checked,
-                        disabled,
-                        &item.accelerator,
-                    );
+                    builder.check_with_accelerator(&item.id, &item.label, &item.value, item.checked, disabled, &item.accelerator);
                 }
             }
             "radio" => {
                 if item.accelerator.is_empty() {
-                    builder.radio(
-                        &item.id,
-                        &item.label,
-                        &item.value,
-                        &item.name,
-                        item.checked,
-                        disabled,
-                    );
+                    builder.radio(&item.id, &item.label, &item.value, &item.name, item.checked, disabled);
                 } else {
-                    builder.radio_with_accelerator(
-                        &item.id,
-                        &item.label,
-                        &item.value,
-                        &item.name,
-                        item.checked,
-                        disabled,
-                        &item.accelerator,
-                    );
+                    builder.radio_with_accelerator(&item.id, &item.label, &item.value, &item.name, item.checked, disabled, &item.accelerator);
                 }
             }
             _ => {}
@@ -214,6 +191,19 @@ pub fn items(mut cx: FunctionContext) -> JsResult<JsArray> {
     let items = extract_item(&menu.items(), &mut cx)?;
 
     Ok(items)
+}
+
+pub fn remove(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
+    let jsitem = cx.argument::<JsObject>(1)?;
+
+    let item = to_menu_item(&mut cx, jsitem);
+
+    let mut map = MENU_MAP.try_lock().unwrap();
+    let menu = map.get_mut(&(hwnd as i32)).unwrap();
+    menu.remove(&item);
+
+    Ok(cx.undefined())
 }
 
 pub fn remove_at(mut cx: FunctionContext) -> JsResult<JsUndefined> {
@@ -292,10 +282,7 @@ pub fn set_theme(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("buildFromTemplate", build_from_template)?;
     cx.export_function("buildFromTemplateWithTheme", build_from_template_with_theme)?;
-    cx.export_function(
-        "buildFromTemplateWithConfig",
-        build_from_template_with_config,
-    )?;
+    cx.export_function("buildFromTemplateWithConfig", build_from_template_with_config)?;
     cx.export_function("popup", popup)?;
     cx.export_function("popupSync", popup_sync)?;
     cx.export_function("items", items)?;
