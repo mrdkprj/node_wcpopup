@@ -76,8 +76,11 @@ const append = () => {
 };
 
 const reload = () => {
-    app.relaunch();
-    app.exit(0);
+    const submenu = menu.getMenuItemById("theme");
+    if (submenu) {
+        let items = submenu.submenu?.items();
+        console.log(items);
+    }
 };
 
 app.whenReady().then(async () => {

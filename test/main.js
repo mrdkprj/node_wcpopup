@@ -117,8 +117,12 @@ var append = function () {
     }
 };
 var reload = function () {
-    electron_1.app.relaunch();
-    electron_1.app.exit(0);
+    var _a;
+    var submenu = menu.getMenuItemById("theme");
+    if (submenu) {
+        var items = (_a = submenu.submenu) === null || _a === void 0 ? void 0 : _a.items();
+        console.log(items);
+    }
 };
 electron_1.app.whenReady().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {

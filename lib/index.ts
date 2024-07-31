@@ -148,9 +148,15 @@ export class Menu {
     }
 
     private toMenuItem(item: PopupMenu.PopupMenuItem): MenuItem {
+        const submenu = new Menu();
+        if (Object.keys(item.submenu).length) {
+            submenu.hwnd = item.submenu.hwnd;
+            submenu.type = item.submenu.type;
+        }
         return {
-            click: this.callbacks[item.id],
             ...item,
+            click: this.callbacks[item.id],
+            submenu,
         };
     }
 
