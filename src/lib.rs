@@ -287,6 +287,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("popupSync", popup_sync)?;
     cx.export_function("items", items)?;
     cx.export_function("removeAt", remove_at)?;
+    cx.export_function("remove", remove)?;
     cx.export_function("append", append)?;
     cx.export_function("insert", insert)?;
     cx.export_function("getDefaultConfig", get_default_config)?;
