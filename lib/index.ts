@@ -147,7 +147,7 @@ export class Menu {
 
     private toMenuItem(item: PopupMenu.PopupMenuItem): MenuItem {
         const submenu = new Menu();
-        if (Object.keys(item.submenu).length) {
+        if (item.submenu && Object.keys(item.submenu).length) {
             submenu.hwnd = item.submenu.hwnd;
             submenu.type = item.submenu.type;
         }
@@ -179,24 +179,24 @@ export class Menu {
         return PopupMenu.items(this.hwnd).map((item) => this.toMenuItem(item));
     }
 
-    remove(item: MenuItem): MenuItem {
+    remove(item: MenuItem) {
         this.ready();
-        return this.toMenuItem(PopupMenu.remove(this.hwnd, item));
+        this.toMenuItem(PopupMenu.remove(this.hwnd, item));
     }
 
-    removeFrom(hwnd: number, item: MenuItem): MenuItem {
+    removeFrom(hwnd: number, item: MenuItem) {
         this.ready();
-        return this.toMenuItem(PopupMenu.remove(hwnd, item));
+        this.toMenuItem(PopupMenu.remove(hwnd, item));
     }
 
-    removeAt(index: number): MenuItem {
+    removeAt(index: number) {
         this.ready();
-        return this.toMenuItem(PopupMenu.removeAt(this.hwnd, index));
+        this.toMenuItem(PopupMenu.removeAt(this.hwnd, index));
     }
 
-    removeAtFrom(hwnd: number, index: number): MenuItem {
+    removeAtFrom(hwnd: number, index: number) {
         this.ready();
-        return this.toMenuItem(PopupMenu.removeAt(hwnd, index));
+        this.toMenuItem(PopupMenu.removeAt(hwnd, index));
     }
 
     append(item: MenuItem) {

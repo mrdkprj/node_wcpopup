@@ -199,6 +199,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         horizontal_margin: to_i32(cx, &size_obj, "horizontalMargin"),
         item_vertical_padding: to_i32(cx, &size_obj, "itemVerticalPadding"),
         item_horizontal_padding: to_i32(cx, &size_obj, "itemHorizontalPadding"),
+        submenu_offset: to_i32(cx, &size_obj, "submenuOffset"),
         dark_font_size: if dark_font_size > 0 {
             Some(dark_font_size)
         } else {
@@ -229,6 +230,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         color: to_i32(cx, &dark_color_scheme_obj, "color") as u32,
         accelerator: to_i32(cx, &dark_color_scheme_obj, "accelerator") as u32,
         border: to_i32(cx, &dark_color_scheme_obj, "border") as u32,
+        separator: to_i32(cx, &dark_color_scheme_obj, "separator") as u32,
         disabled: to_i32(cx, &dark_color_scheme_obj, "disabled") as u32,
         background_color: to_i32(cx, &dark_color_scheme_obj, "backgroundColor") as u32,
         hover_background_color: to_i32(cx, &dark_color_scheme_obj, "hoverBackgroundColor") as u32,
@@ -238,6 +240,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         color: to_i32(cx, &light_color_scheme_obj, "color") as u32,
         accelerator: to_i32(cx, &light_color_scheme_obj, "accelerator") as u32,
         border: to_i32(cx, &light_color_scheme_obj, "border") as u32,
+        separator: to_i32(cx, &light_color_scheme_obj, "separator") as u32,
         disabled: to_i32(cx, &light_color_scheme_obj, "disabled") as u32,
         background_color: to_i32(cx, &light_color_scheme_obj, "backgroundColor") as u32,
         hover_background_color: to_i32(cx, &light_color_scheme_obj, "hoverBackgroundColor") as u32,
@@ -285,6 +288,8 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     size.set(cx, "itemVerticalPadding", a)?;
     let a = cx.number(config.size.item_horizontal_padding);
     size.set(cx, "itemHorizontalPadding", a)?;
+    let a = cx.number(config.size.submenu_offset);
+    size.set(cx, "submenuOffset", a)?;
     let a = cx.number(config.size.dark_font_size.unwrap_or(0));
     size.set(cx, "darkFontSize", a)?;
     let a = cx.number(config.size.dark_font_weight.unwrap_or(0));
@@ -304,6 +309,8 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     dark.set(cx, "accelerator", a)?;
     let a = cx.number(config.color.dark.border);
     dark.set(cx, "border", a)?;
+    let a = cx.number(config.color.dark.separator);
+    dark.set(cx, "separator", a)?;
     let a = cx.number(config.color.dark.disabled);
     dark.set(cx, "disabled", a)?;
     let a = cx.number(config.color.dark.background_color);
@@ -319,6 +326,8 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     light.set(cx, "accelerator", a)?;
     let a = cx.number(config.color.light.border);
     light.set(cx, "border", a)?;
+    let a = cx.number(config.color.light.separator);
+    light.set(cx, "separator", a)?;
     let a = cx.number(config.color.light.disabled);
     light.set(cx, "disabled", a)?;
     let a = cx.number(config.color.light.background_color);
