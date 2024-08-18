@@ -1,4 +1,4 @@
-import PopupMenu from "../build/index";
+import * as PopupMenu from "../build/index";
 
 export type MenuItemType = "normal" | "separator" | "submenu" | "checkbox" | "radio";
 

@@ -1,6 +1,6 @@
 [package]
 name = "node_wcpopup"
-version = "0.0.4"
+version = "0.0.5"
 license = "MIT"
 edition = "2021"
 exclude = ["index.node"]
@@ -27,5 +27,5 @@ features = [
 version = "0.2.0"
 #features = ["accelerator"]
 
-[patch.crates-io]
+#[patch.crates-io]
 #wcpopup = { path = "../wcpopup" }

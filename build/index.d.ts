@@ -30,4 +30,4 @@ declare namespace PopupMenu {
     function getMenuItemById(hwnd:number, id:string): PopupMenuItem | void;
 }
 
-export default PopupMenu;
+export = PopupMenu;
