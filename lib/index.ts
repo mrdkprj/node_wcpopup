@@ -54,11 +54,21 @@ export type ThemeColor = {
 
 export type Corner = "Round" | "DoNotRound";
 
+export type FontWeight = "Thin" | "Light" | "Normal" | "Medium" | "Bold";
+export type MenuFont = {
+    fontFamily: string;
+    darkFontSize: number;
+    darkFontWeight: FontWeight;
+    lightFontSize: number;
+    lightFontWeight: FontWeight;
+};
+
 export type Config = {
     theme: Theme;
     size: MenuSize;
     color: ThemeColor;
     corner: Corner;
+    font: MenuFont;
 };
 
 export type MenuType = "main" | "submenu";

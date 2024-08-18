@@ -39,8 +39,9 @@ const createWindow = () => {
         hwnd = hbuf.readInt32BE();
     }
     let config = getDefaultConfig();
+
     config.theme = "dark";
-    config.size.itemVerticalPadding = 15;
+    config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 

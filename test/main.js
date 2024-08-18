@@ -77,7 +77,7 @@ var createWindow = function () {
     }
     var config = (0, index_1.getDefaultConfig)();
     config.theme = "dark";
-    config.size.itemVerticalPadding = 15;
+    config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 var handleSetTitle = function (_event, pos) { return __awaiter(void 0, void 0, void 0, function () {

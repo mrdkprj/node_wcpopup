@@ -344,9 +344,9 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
 
     let font = cx.empty_object();
     let a = cx.string(config.font.font_family.clone());
-    size.set(cx, "fontFamily", a)?;
+    font.set(cx, "fontFamily", a)?;
     let a = cx.number(config.font.dark_font_size);
-    size.set(cx, "darkFontSize", a)?;
+    font.set(cx, "darkFontSize", a)?;
     let a = cx.string(match config.font.dark_font_weight {
         FontWeight::Thin => "Thin",
         FontWeight::Light => "Light",
@@ -354,9 +354,9 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
         FontWeight::Medium => "Medium",
         FontWeight::Bold => "Bold",
     });
-    size.set(cx, "darkFontWeight", a)?;
+    font.set(cx, "darkFontWeight", a)?;
     let a = cx.number(config.font.light_font_size);
-    size.set(cx, "lightFontSize", a)?;
+    font.set(cx, "lightFontSize", a)?;
     let a = cx.string(match config.font.light_font_weight {
         FontWeight::Thin => "Thin",
         FontWeight::Light => "Light",
@@ -364,7 +364,7 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
         FontWeight::Medium => "Medium",
         FontWeight::Bold => "Bold",
     });
-    size.set(cx, "lightFontWeight", a)?;
+    font.set(cx, "lightFontWeight", a)?;
 
     configjs.set(cx, "font", font)?;
 
