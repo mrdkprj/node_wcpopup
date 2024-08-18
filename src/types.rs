@@ -4,7 +4,7 @@ use neon::{
     result::JsResult,
     types::{JsArray, JsBoolean, JsNumber, JsObject, JsString},
 };
-use wcpopup::{ColorScheme, Config, Corner, Menu, MenuItem, MenuItemType, MenuSize, MenuType, Theme, ThemeColor};
+use wcpopup::{ColorScheme, Config, Corner, FontWeight, Menu, MenuFont, MenuItem, MenuItemType, MenuSize, MenuType, Theme, ThemeColor};
 
 #[derive(Debug)]
 pub struct ElectronMenuItem {
@@ -59,6 +59,10 @@ pub fn to_i32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> 
     value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as i32
 }
 
+pub fn to_f32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> f32 {
+    value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as f32
+}
+
 pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuItem {
     let id = to_string(cx, &value, "id");
     let label = to_string(cx, &value, "label");
@@ -79,7 +83,7 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
         Some(true)
     };
 
-    let item_type_str = value.get_opt::<JsString, _, _>(cx, "type").unwrap().unwrap_or_else(|| JsString::new(cx, "")).value(cx);
+    let item_type_str = to_string(cx, &value, "type");
 
     let menu_item_type = match item_type_str.as_str() {
         "normal" => MenuItemType::Text,
@@ -134,10 +138,10 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
     let name = cx.string(item.name.clone());
     obj.set(cx, "name", name)?;
 
-    let checked = cx.boolean(item.checked());
+    let checked = cx.boolean(item.checked);
     obj.set(cx, "checked", checked)?;
 
-    let enabled = cx.boolean(!item.disabled());
+    let enabled = cx.boolean(!item.disabled);
     obj.set(cx, "enabled", enabled)?;
 
     let uuid = cx.number(item.uuid);
@@ -188,37 +192,36 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
     };
 
     let size_obj = value.get::<JsObject, _, _>(cx, "size").unwrap();
-    let dark_font_size = to_i32(cx, &size_obj, "darkFontSize");
-    let dark_font_weight = to_i32(cx, &size_obj, "darkFontWeight");
-    let light_font_size = to_i32(cx, &size_obj, "lightFontSize");
-    let light_font_weight = to_i32(cx, &size_obj, "lightFontWeight");
 
     let size = MenuSize {
         border_size: to_i32(cx, &size_obj, "borderSize"),
-        vertical_margin: to_i32(cx, &size_obj, "verticalMargin"),
-        horizontal_margin: to_i32(cx, &size_obj, "horizontalMargin"),
+        vertical_padding: to_i32(cx, &size_obj, "verticalPadding"),
+        horizontal_padding: to_i32(cx, &size_obj, "horizontalPaddint"),
         item_vertical_padding: to_i32(cx, &size_obj, "itemVerticalPadding"),
         item_horizontal_padding: to_i32(cx, &size_obj, "itemHorizontalPadding"),
         submenu_offset: to_i32(cx, &size_obj, "submenuOffset"),
-        dark_font_size: if dark_font_size > 0 {
-            Some(dark_font_size)
-        } else {
-            None
+    };
+
+    let font_obj = value.get::<JsObject, _, _>(cx, "font").unwrap();
+    let font = MenuFont {
+        font_family: to_string(cx, &font_obj, "fontFamily"),
+        dark_font_size: to_f32(cx, &font_obj, "darkFontSize"),
+        dark_font_weight: match to_string(cx, &font_obj, "darkFontWeight").as_str() {
+            "Thin" => FontWeight::Thin,
+            "Light" => FontWeight::Light,
+            "Normal" => FontWeight::Normal,
+            "Medium" => FontWeight::Medium,
+            "Bold" => FontWeight::Bold,
+            _ => FontWeight::Normal,
         },
-        dark_font_weight: if dark_font_weight > 0 {
-            Some(dark_font_weight)
-        } else {
-            None
-        },
-        light_font_size: if light_font_size > 0 {
-            Some(light_font_size)
-        } else {
-            None
-        },
-        light_font_weight: if light_font_weight > 0 {
-            Some(light_font_weight)
-        } else {
-            None
+        light_font_size: to_f32(cx, &font_obj, "lightFontSize"),
+        light_font_weight: match to_string(cx, &font_obj, "lightFontWeight").as_str() {
+            "Thin" => FontWeight::Thin,
+            "Light" => FontWeight::Light,
+            "Normal" => FontWeight::Normal,
+            "Medium" => FontWeight::Medium,
+            "Bold" => FontWeight::Bold,
+            _ => FontWeight::Normal,
         },
     };
 
@@ -262,6 +265,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
         size,
         color,
         corner,
+        font,
     }
 }
 
@@ -280,24 +284,16 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     let size = cx.empty_object();
     let a = cx.number(config.size.border_size);
     size.set(cx, "borderSize", a)?;
-    let a = cx.number(config.size.vertical_margin);
-    size.set(cx, "verticalMargin", a)?;
-    let a = cx.number(config.size.horizontal_margin);
-    size.set(cx, "horizontalMargin", a)?;
+    let a = cx.number(config.size.vertical_padding);
+    size.set(cx, "verticalPadding", a)?;
+    let a = cx.number(config.size.horizontal_padding);
+    size.set(cx, "horizontalPadding", a)?;
     let a = cx.number(config.size.item_vertical_padding);
     size.set(cx, "itemVerticalPadding", a)?;
     let a = cx.number(config.size.item_horizontal_padding);
     size.set(cx, "itemHorizontalPadding", a)?;
     let a = cx.number(config.size.submenu_offset);
     size.set(cx, "submenuOffset", a)?;
-    let a = cx.number(config.size.dark_font_size.unwrap_or(0));
-    size.set(cx, "darkFontSize", a)?;
-    let a = cx.number(config.size.dark_font_weight.unwrap_or(0));
-    size.set(cx, "darkFontWeight", a)?;
-    let a = cx.number(config.size.light_font_size.unwrap_or(0));
-    size.set(cx, "lightFontSize", a)?;
-    let a = cx.number(config.size.light_font_weight.unwrap_or(0));
-    size.set(cx, "lightFontWeight", a)?;
 
     configjs.set(cx, "size", size)?;
 
@@ -343,7 +339,34 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     } else {
         "DoNotRound"
     });
+
     configjs.set(cx, "corner", corner)?;
+
+    let font = cx.empty_object();
+    let a = cx.string(config.font.font_family.clone());
+    size.set(cx, "fontFamily", a)?;
+    let a = cx.number(config.font.dark_font_size);
+    size.set(cx, "darkFontSize", a)?;
+    let a = cx.string(match config.font.dark_font_weight {
+        FontWeight::Thin => "Thin",
+        FontWeight::Light => "Light",
+        FontWeight::Normal => "Normal",
+        FontWeight::Medium => "Medium",
+        FontWeight::Bold => "Bold",
+    });
+    size.set(cx, "darkFontWeight", a)?;
+    let a = cx.number(config.font.light_font_size);
+    size.set(cx, "lightFontSize", a)?;
+    let a = cx.string(match config.font.light_font_weight {
+        FontWeight::Thin => "Thin",
+        FontWeight::Light => "Light",
+        FontWeight::Normal => "Normal",
+        FontWeight::Medium => "Medium",
+        FontWeight::Bold => "Bold",
+    });
+    size.set(cx, "lightFontWeight", a)?;
+
+    configjs.set(cx, "font", font)?;
 
     Ok(configjs)
 }

@@ -760,9 +760,9 @@ checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
 
 [[package]]
 name = "wcpopup"
-version = "0.1.18"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2a75681d8332c423d9eb377a7fa75b5763a81594c4a2698b3a3e0c24f71301b"
+checksum = "52d51b66896ec04b45bea2ffaf4aa968aa1c9f517ee6363e8ccf209876ef1f99"
 dependencies = [
  "once_cell",
  "serde",
