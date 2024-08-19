@@ -4,10 +4,9 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "install": "npm run build-release",
+    "install": "npm run build -- --release",
     "build": "cargo-cp-artifact -nc ./build/index.node -- cargo build --message-format=json-render-diagnostics",
-    "build-debug": "tsc ./lib/index.ts --esModuleInterop && npm run build -- --release",
-    "build-release": "npm run build -- --release"
+    "build-release": "tsc ./lib/index.ts --esModuleInterop && npm run build -- --release"
   },
   "author": "mrdkprj",
   "license": "MIT",
