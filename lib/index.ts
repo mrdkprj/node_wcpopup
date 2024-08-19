@@ -80,13 +80,17 @@ export const getDefaultConfig = () => {
 };
 
 export class Menu {
-    hwnd = 0;
+    private hwnd = 0;
     type = "";
     private callbacks: { [key: string]: Function } = {};
     private uuid = 0;
 
     private ready() {
         if (!this.hwnd) throw new Error("Menu does not exist");
+    }
+
+    getWindowHandle(): number {
+        return this.hwnd;
     }
 
     buildFromTemplate(hwnd: number, template: MenuItemConstructorOptions[]) {
@@ -191,22 +195,12 @@ export class Menu {
 
     remove(item: MenuItem) {
         this.ready();
-        this.toMenuItem(PopupMenu.remove(this.hwnd, item));
-    }
-
-    removeFrom(hwnd: number, item: MenuItem) {
-        this.ready();
-        this.toMenuItem(PopupMenu.remove(hwnd, item));
+        PopupMenu.remove(this.hwnd, item);
     }
 
     removeAt(index: number) {
         this.ready();
-        this.toMenuItem(PopupMenu.removeAt(this.hwnd, index));
-    }
-
-    removeAtFrom(hwnd: number, index: number) {
-        this.ready();
-        this.toMenuItem(PopupMenu.removeAt(hwnd, index));
+        PopupMenu.removeAt(this.hwnd, index);
     }
 
     append(item: MenuItem) {
@@ -214,19 +208,9 @@ export class Menu {
         PopupMenu.append(this.hwnd, this.toEffectiveTemplate(item) as MenuItem);
     }
 
-    appendTo(hwnd: number, item: MenuItem) {
-        this.ready();
-        PopupMenu.append(hwnd, this.toEffectiveTemplate(item) as MenuItem);
-    }
-
     insert(index: number, item: MenuItem) {
         this.ready();
         PopupMenu.insert(this.hwnd, index, this.toEffectiveTemplate(item) as MenuItem);
-    }
-
-    insertTo(hwnd: number, index: number, item: MenuItem) {
-        this.ready();
-        PopupMenu.insert(hwnd, index, this.toEffectiveTemplate(item) as MenuItem);
     }
 
     setTheme(theme: Theme) {

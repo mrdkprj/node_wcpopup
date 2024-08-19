@@ -56,18 +56,18 @@ var createWindow = function () {
         },
     });
     win.loadFile("index.html");
-    var win2 = new electron_1.BrowserWindow({
-        title: "sub",
-        parent: win,
-        width: 800,
-        height: 601,
-        webPreferences: {
-            preload: path_1.default.join(__dirname, "preload.js"),
-        },
-    });
-    win2.loadFile("index2.html");
+    // const win2 = new BrowserWindow({
+    //     title: "sub",
+    //     parent: win,
+    //     width: 800,
+    //     height: 601,
+    //     webPreferences: {
+    //         preload: path.join(__dirname, "preload.js"),
+    //     },
+    // });
+    // win2.loadFile("index2.html");
     menu = new index_1.Menu();
-    var hbuf = win2.getNativeWindowHandle();
+    var hbuf = win.getNativeWindowHandle();
     var hwnd = 0;
     if (os_1.default.endianness() == "LE") {
         hwnd = hbuf.readInt32LE();
@@ -95,24 +95,24 @@ var toggle = function () {
     electron_1.nativeTheme.themeSource = dark ? "dark" : "light";
     menu.setTheme(electron_1.nativeTheme.themeSource);
 };
-var apflg = true;
+var apflg = false;
 var append = function () {
+    var _a, _b;
     apflg = !apflg;
     if (apflg) {
-        menu.append({
-            accelerator: "F1",
-            label: "Test fro main",
-            click: callback,
-        });
-    }
-    else {
         var submenu = menu.getMenuItemById("theme");
-        if (submenu && submenu.submenu) {
-            menu.appendTo(submenu.submenu.hwnd, {
+        if (submenu) {
+            (_a = submenu.submenu) === null || _a === void 0 ? void 0 : _a.append({
                 accelerator: "F2",
                 label: "Test for sub",
                 click: callback,
             });
+        }
+    }
+    else {
+        var submenu = menu.getMenuItemById("theme");
+        if (submenu) {
+            (_b = submenu.submenu) === null || _b === void 0 ? void 0 : _b.removeAt(2);
         }
     }
 };

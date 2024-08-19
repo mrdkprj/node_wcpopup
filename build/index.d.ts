@@ -22,8 +22,8 @@ declare namespace PopupMenu {
     function popup(hwnd:number, x:number, y:number): Promise<PopupMenuItem>;
     function popupSync(hwnd:number, x:number, y:number): PopupMenuItem;
     function items(hwnd:number): PopupMenuItem[];
-    function remove(hwnd:number, item:MenuItem): PopupMenuItem;
-    function removeAt(hwnd:number, index:number): PopupMenuItem;
+    function remove(hwnd:number, item:MenuItem): void;
+    function removeAt(hwnd:number, index:number): void;
     function append(hwnd:number, item:MenuItem): void;
     function insert(hwnd:number, index:number, item:MenuItem): void;
     function setTheme(hwnd:number, theme:Theme): void;

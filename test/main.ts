@@ -18,20 +18,20 @@ const createWindow = () => {
 
     win.loadFile("index.html");
 
-    const win2 = new BrowserWindow({
-        title: "sub",
-        parent: win,
-        width: 800,
-        height: 601,
-        webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
-        },
-    });
+    // const win2 = new BrowserWindow({
+    //     title: "sub",
+    //     parent: win,
+    //     width: 800,
+    //     height: 601,
+    //     webPreferences: {
+    //         preload: path.join(__dirname, "preload.js"),
+    //     },
+    // });
 
-    win2.loadFile("index2.html");
+    // win2.loadFile("index2.html");
 
     menu = new Menu();
-    const hbuf = win2.getNativeWindowHandle();
+    const hbuf = win.getNativeWindowHandle();
     let hwnd = 0;
     if (os.endianness() == "LE") {
         hwnd = hbuf.readInt32LE();
@@ -55,23 +55,23 @@ const toggle = () => {
     menu.setTheme(nativeTheme.themeSource);
 };
 
-let apflg = true;
+let apflg = false;
 const append = () => {
     apflg = !apflg;
+
     if (apflg) {
-        menu.append({
-            accelerator: "F1",
-            label: "Test fro main",
-            click: callback,
-        });
-    } else {
         const submenu = menu.getMenuItemById("theme");
-        if (submenu && submenu.submenu) {
-            menu.appendTo(submenu.submenu.hwnd, {
+        if (submenu) {
+            submenu.submenu?.append({
                 accelerator: "F2",
                 label: "Test for sub",
                 click: callback,
             });
+        }
+    } else {
+        const submenu = menu.getMenuItemById("theme");
+        if (submenu) {
+            submenu.submenu?.removeAt(2);
         }
     }
 };
