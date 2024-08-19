@@ -63,15 +63,18 @@ const append = () => {
         const submenu = menu.getMenuItemById("theme");
         if (submenu) {
             submenu.submenu?.append({
+                id: "test1234",
                 accelerator: "F2",
                 label: "Test for sub",
                 click: callback,
             });
         }
     } else {
+        const todel = menu.getMenuItemById("test1234");
+        console.log(todel);
         const submenu = menu.getMenuItemById("theme");
-        if (submenu) {
-            submenu.submenu?.removeAt(2);
+        if (submenu && todel) {
+            submenu.submenu?.remove(todel);
         }
     }
 };

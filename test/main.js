@@ -103,6 +103,7 @@ var append = function () {
         var submenu = menu.getMenuItemById("theme");
         if (submenu) {
             (_a = submenu.submenu) === null || _a === void 0 ? void 0 : _a.append({
+                id: "test1234",
                 accelerator: "F2",
                 label: "Test for sub",
                 click: callback,
@@ -110,9 +111,11 @@ var append = function () {
         }
     }
     else {
+        var todel = menu.getMenuItemById("test1234");
+        console.log(todel);
         var submenu = menu.getMenuItemById("theme");
-        if (submenu) {
-            (_b = submenu.submenu) === null || _b === void 0 ? void 0 : _b.removeAt(2);
+        if (submenu && todel) {
+            (_b = submenu.submenu) === null || _b === void 0 ? void 0 : _b.remove(todel);
         }
     }
 };

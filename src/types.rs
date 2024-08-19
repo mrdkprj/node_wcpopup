@@ -94,13 +94,16 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
         _ => MenuItemType::Text,
     };
 
-    match menu_item_type {
+    let mut item = match menu_item_type {
         MenuItemType::Text => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
         MenuItemType::Separator => MenuItem::new_separator(),
         MenuItemType::Submenu => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
         MenuItemType::Checkbox => MenuItem::new_check_item(&id, &label, &item_value, accelerator, checked, disabled),
         MenuItemType::Radio => MenuItem::new_radio_item(&id, &label, &item_value, &name, accelerator, checked, disabled),
-    }
+    };
+
+    item.uuid = to_i32(cx, &value, "uuid") as u16;
+    item
 }
 
 pub fn extract_item<'a, C: Context<'a>>(vec: &[MenuItem], cx: &mut C) -> JsResult<'a, JsArray> {
