@@ -15,7 +15,6 @@ pub struct ElectronMenuItem {
     pub checked: bool,
     pub submenu: Vec<ElectronMenuItem>,
     pub id: String,
-    pub value: String,
     pub name: String,
 }
 
@@ -41,7 +40,6 @@ impl ElectronMenuItem {
                 })
                 .collect(),
             id: to_string(cx, &value, "id"),
-            value: to_string(cx, &value, "value"),
             name: to_string(cx, &value, "name"),
         }
     }
@@ -66,7 +64,6 @@ pub fn to_f32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> 
 pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuItem {
     let id = to_string(cx, &value, "id");
     let label = to_string(cx, &value, "label");
-    let item_value = to_string(cx, &value, "value");
     let accelerator_str = to_string(cx, &value, "accelerator");
     let name = to_string(cx, &value, "name");
     let enabled = to_bool(cx, &value, "enabled", true);
@@ -95,11 +92,11 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
     };
 
     let mut item = match menu_item_type {
-        MenuItemType::Text => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
+        MenuItemType::Text => MenuItem::new_text_item(&id, &label, accelerator, disabled),
         MenuItemType::Separator => MenuItem::new_separator(),
-        MenuItemType::Submenu => MenuItem::new_text_item(&id, &label, &item_value, accelerator, disabled),
-        MenuItemType::Checkbox => MenuItem::new_check_item(&id, &label, &item_value, accelerator, checked, disabled),
-        MenuItemType::Radio => MenuItem::new_radio_item(&id, &label, &item_value, &name, accelerator, checked, disabled),
+        MenuItemType::Submenu => MenuItem::new_text_item(&id, &label, accelerator, disabled),
+        MenuItemType::Checkbox => MenuItem::new_check_item(&id, &label, accelerator, checked, disabled),
+        MenuItemType::Radio => MenuItem::new_radio_item(&id, &label, &name, accelerator, checked, disabled),
     };
 
     item.uuid = to_i32(cx, &value, "uuid") as u16;
@@ -131,9 +128,6 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
 
     let label = cx.string(item.label.clone());
     obj.set(cx, "label", label)?;
-
-    let value = cx.string(item.value.clone());
-    obj.set(cx, "value", value)?;
 
     let accelerator = cx.string(item.accelerator.clone());
     obj.set(cx, "accelerator", accelerator)?;
@@ -173,7 +167,7 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
 pub fn from_menu<'a, C: Context<'a>>(cx: &mut C, menu: &Menu) -> JsResult<'a, JsObject> {
     let obj = cx.empty_object();
 
-    let hwnd = cx.number(menu.hwnd.0 as f64);
+    let hwnd = cx.number(menu.window_handle as f64);
     obj.set(cx, "hwnd", hwnd)?;
 
     let type_str = match menu.menu_type {

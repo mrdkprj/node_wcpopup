@@ -34,7 +34,7 @@ features = [
 ]
 
 [dependencies.wcpopup]
-version = "0.2.0"
+version = "0.2.3"
 #features = ["accelerator"]
 
 #[patch.crates-io]

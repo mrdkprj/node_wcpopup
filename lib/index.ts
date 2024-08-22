@@ -10,7 +10,6 @@ export type MenuItemConstructorOptions = {
     enabled?: boolean;
     checked?: boolean;
     submenu?: MenuItemConstructorOptions[] | Menu;
-    value?: any;
     name?: string;
     click?: Function;
 };
@@ -23,7 +22,6 @@ export type MenuItem = {
     enabled?: boolean;
     checked?: boolean;
     submenu?: Menu;
-    value?: any;
     name?: string;
     click?: Function;
 };
@@ -121,8 +119,6 @@ export class Menu {
     private toEffectiveTemplate(item: MenuItemConstructorOptions | MenuItem): MenuItemConstructorOptions | MenuItem {
         item.id = this.getId(item.id);
 
-        item.value = this.getValue(item.value);
-
         item.type = this.getType(item.type, item.submenu);
 
         if (item.click) {
@@ -149,14 +145,6 @@ export class Menu {
         }
 
         return type;
-    }
-
-    private getValue(value: any): string {
-        if (typeof value != "string") {
-            return value ? String(value) : "";
-        }
-
-        return value;
     }
 
     private toMenuItem(item: PopupMenu.PopupMenuItem): MenuItem {

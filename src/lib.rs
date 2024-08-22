@@ -8,7 +8,6 @@ use neon::{
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use wcpopup::{Config, Menu, MenuBuilder, Theme};
-use windows::Win32::Foundation::HWND;
 mod types;
 use types::*;
 
@@ -79,14 +78,13 @@ fn build(cx: &mut FunctionContext, parent: f64, templates: Vec<Handle<JsValue>>,
         })
         .collect();
 
-    let hwnd = HWND(parent as isize);
-    let mut builder = MenuBuilder::new_from_config(hwnd, config);
+    let mut builder = MenuBuilder::new_from_config(parent as isize, config);
 
     build_menu(&mut builder, &items);
     let menu = builder.build().unwrap();
 
     let mut map = MENU_MAP.try_lock().unwrap();
-    let inner = menu.hwnd.0;
+    let inner = menu.window_handle;
     (*map).insert(inner as i32, menu);
 
     inner
@@ -115,21 +113,21 @@ fn build_menu(builder: &mut MenuBuilder, items: &Vec<ElectronMenuItem>) {
                 build_menu(&mut parent, &item.submenu);
                 let submenu = parent.build().unwrap();
                 let mut map = MENU_MAP.try_lock().unwrap();
-                (*map).insert(submenu.hwnd.0 as i32, submenu);
+                (*map).insert(submenu.window_handle as i32, submenu);
                 std::mem::drop(map);
             }
             "checkbox" => {
                 if item.accelerator.is_empty() {
-                    builder.check(&item.id, &item.label, &item.value, item.checked, disabled);
+                    builder.check(&item.id, &item.label, item.checked, disabled);
                 } else {
-                    builder.check_with_accelerator(&item.id, &item.label, &item.value, item.checked, disabled, &item.accelerator);
+                    builder.check_with_accelerator(&item.id, &item.label, item.checked, disabled, &item.accelerator);
                 }
             }
             "radio" => {
                 if item.accelerator.is_empty() {
-                    builder.radio(&item.id, &item.label, &item.value, &item.name, item.checked, disabled);
+                    builder.radio(&item.id, &item.label, &item.name, item.checked, disabled);
                 } else {
-                    builder.radio_with_accelerator(&item.id, &item.label, &item.value, &item.name, item.checked, disabled, &item.accelerator);
+                    builder.radio_with_accelerator(&item.id, &item.label, &item.name, item.checked, disabled, &item.accelerator);
                 }
             }
             _ => {}

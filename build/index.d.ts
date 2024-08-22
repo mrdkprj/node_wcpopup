@@ -10,7 +10,6 @@ declare namespace PopupMenu {
         enabled: boolean;
         checked: boolean;
         submenu: Menu;
-        value: any;
         name: string;
         readonly uuid:number;
     };
