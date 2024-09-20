@@ -6,7 +6,32 @@ edition = "2021"
 exclude = ["index.node"]
 
 [lib]
+name = "node_wcpopup"
+path = "src/lib.rs"
 crate-type = ["cdylib"]
+
+[dependencies]
+async-std = "1.13.0"
+once_cell = "1.19.0"
+
+[dependencies.neon]
+version = "1"
+
+[target.'cfg(target_os = "windows")'.dependencies.windows]
+version = "0.57"
+features = [
+    "Win32_Foundation",
+]
+
+[target.'cfg(target_os = "linux")'.dependencies.gtk]
+version = "0.18.0"
+
+[dependencies.wcpopup]
+version = "0.3.0"
+#features = ["accelerator"]
+
+#[patch.crates-io]
+#wcpopup = { path = "../wcpopup" }
 
 [profile.release]
 opt-level = "s"
@@ -19,23 +44,3 @@ panic = 'unwind'
 incremental = false
 codegen-units = 1
 rpath = false
-
-[dependencies]
-async-std = "1.12.0"
-once_cell = "1.19.0"
-
-[dependencies.neon]
-version = "1"
-
-[dependencies.windows]
-version = "0.57"
-features = [
-    "Win32_Foundation",
-]
-
-[dependencies.wcpopup]
-version = "0.2.3"
-#features = ["accelerator"]
-
-#[patch.crates-io]
-#wcpopup = { path = "../wcpopup" }

@@ -1,11 +1,11 @@
 {
   "name": "node_wcpopup",
-  "version": "0.0.10",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Windows Context Menu",
   "main": "lib/index.js",
   "scripts": {
     "install": "npm run build -- --release",
-    "build": "cargo-cp-artifact -nc ./build/index.node -- cargo build --message-format=json-render-diagnostics",
+    "build": "cargo-cp-artifact -a cdylib node_wcpopup ./build/index.node -- cargo build --message-format=json-render-diagnostics",
     "build-release": "tsc ./lib/index.ts --esModuleInterop && npm run build -- --release"
   },
   "author": "mrdkprj",

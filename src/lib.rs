@@ -7,7 +7,10 @@ use neon::{
 };
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
-use wcpopup::{Config, Menu, MenuBuilder, Theme};
+use wcpopup::{
+    config::{Config, Theme},
+    Menu, MenuBuilder,
+};
 mod types;
 use types::*;
 
@@ -161,27 +164,6 @@ pub fn popup(mut cx: FunctionContext) -> JsResult<JsPromise> {
     Ok(promise)
 }
 
-pub fn popup_sync(mut cx: FunctionContext) -> JsResult<JsObject> {
-    if cx.len() != 3 {
-        return cx.throw_error("Invalid number of arguments");
-    }
-
-    let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
-    let x = cx.argument::<JsNumber>(1)?.value(&mut cx);
-    let y = cx.argument::<JsNumber>(2)?.value(&mut cx);
-
-    let map = MENU_MAP.try_lock().unwrap();
-    let menu = map.get(&(hwnd as i32)).unwrap();
-    let x = menu.popup_at(x as i32, y as i32);
-
-    let result = match x {
-        Some(data) => from_menu_item(&mut cx, &data),
-        None => Ok(cx.empty_object()),
-    };
-
-    result
-}
-
 pub fn items(mut cx: FunctionContext) -> JsResult<JsArray> {
     let hwnd = cx.argument::<JsNumber>(0)?.value(&mut cx);
     let map = MENU_MAP.try_lock().unwrap();
@@ -282,7 +264,6 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("buildFromTemplateWithTheme", build_from_template_with_theme)?;
     cx.export_function("buildFromTemplateWithConfig", build_from_template_with_config)?;
     cx.export_function("popup", popup)?;
-    cx.export_function("popupSync", popup_sync)?;
     cx.export_function("items", items)?;
     cx.export_function("removeAt", remove_at)?;
     cx.export_function("remove", remove)?;

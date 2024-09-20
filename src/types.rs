@@ -4,7 +4,10 @@ use neon::{
     result::JsResult,
     types::{JsArray, JsBoolean, JsNumber, JsObject, JsString},
 };
-use wcpopup::{ColorScheme, Config, Corner, FontWeight, Menu, MenuFont, MenuItem, MenuItemType, MenuSize, MenuType, Theme, ThemeColor};
+use wcpopup::{
+    config::{ColorScheme, Config, Corner, FontWeight, MenuFont, MenuSize, Theme, ThemeColor},
+    Menu, MenuItem, MenuItemType, MenuType,
+};
 
 #[derive(Debug)]
 pub struct ElectronMenuItem {

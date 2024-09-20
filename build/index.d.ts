@@ -19,7 +19,6 @@ declare namespace PopupMenu {
     function buildFromTemplateWithTheme(hwnd:number, template:MenuItemConstructorOptions[], theme:Theme): number;
     function buildFromTemplateWithConfig(hwnd:number, template:MenuItemConstructorOptions[], config:Config): number;
     function popup(hwnd:number, x:number, y:number): Promise<PopupMenuItem>;
-    function popupSync(hwnd:number, x:number, y:number): PopupMenuItem;
     function items(hwnd:number): PopupMenuItem[];
     function remove(hwnd:number, item:MenuItem): void;
     function removeAt(hwnd:number, index:number): void;

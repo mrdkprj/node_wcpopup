@@ -168,14 +168,6 @@ export class Menu {
         }
     }
 
-    popupSync(x: number, y: number) {
-        this.ready();
-        const result = PopupMenu.popupSync(this.hwnd, x, y);
-        if (Object.keys(result).length) {
-            this.callbacks[result.id](result);
-        }
-    }
-
     items(): MenuItem[] {
         this.ready();
         return PopupMenu.items(this.hwnd).map((item) => this.toMenuItem(item));
