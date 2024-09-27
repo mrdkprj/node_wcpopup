@@ -164,7 +164,6 @@ export class Menu {
     async popup(x: number, y: number) {
         this.ready();
         const result = await PopupMenu.popup(this.hwnd, x, y);
-        console.log(result);
         if (Object.keys(result).length) {
             this.callbacks[result.id](result);
         }
