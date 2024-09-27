@@ -1,5 +1,7 @@
 use async_std::sync::Mutex;
+#[cfg(target_os = "linux")]
 use gdkx11::ffi::{gdk_x11_get_default_xdisplay, gdk_x11_lookup_xdisplay, gdk_x11_window_foreign_new_for_display};
+#[cfg(target_os = "linux")]
 use gtk::{
     gdk::Window,
     glib::{self, translate::FromGlibPtrFull},
