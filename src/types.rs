@@ -9,7 +9,7 @@ use wcpopup::{
     Menu, MenuItem, MenuItemType, MenuType,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ElectronMenuItem {
     pub itype: String,
     pub label: String,
@@ -170,7 +170,10 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
 pub fn from_menu<'a, C: Context<'a>>(cx: &mut C, menu: &Menu) -> JsResult<'a, JsObject> {
     let obj = cx.empty_object();
 
+    #[cfg(target_os = "windows")]
     let hwnd = cx.number(menu.window_handle as f64);
+    #[cfg(target_os = "linux")]
+    let hwnd = cx.number(menu.gtk_menu_handle as f64);
     obj.set(cx, "hwnd", hwnd)?;
 
     let type_str = match menu.menu_type {

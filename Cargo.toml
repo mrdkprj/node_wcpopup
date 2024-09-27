@@ -13,6 +13,7 @@ crate-type = ["cdylib"]
 [dependencies]
 async-std = "1.13.0"
 once_cell = "1.19.0"
+gdkx11 = "0.18.0"
 
 [dependencies.neon]
 version = "1"
@@ -30,8 +31,8 @@ version = "0.18.0"
 version = "0.3.0"
 #features = ["accelerator"]
 
-#[patch.crates-io]
-#wcpopup = { path = "../wcpopup" }
+[patch.crates-io]
+wcpopup = { path = "../wcpopup" }
 
 [profile.release]
 opt-level = "s"

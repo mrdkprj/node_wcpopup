@@ -1,6 +1,23 @@
+let openContext = false;
 window.addEventListener("contextmenu", e => {
-    window.electronAPI.setTitle({x:e.screenX, y:e.screenY});
+    if(navigator.userAgent.includes("Linux")){
+        e.preventDefault();
+        openContext = true;
+    }else{
+        window.electronAPI.setTitle({x:e.screenX, y:e.screenY});
+    }
+
 })
+
+window.addEventListener("mouseup", (e) => {{
+
+    if(navigator.userAgent.includes("Linux")){
+        if (e.button === 2 && openContext) {{
+            window.electronAPI.setTitle({x:e.clientX, y:e.clientY});
+            openContext = false;
+        }}
+    }
+}});
 
 window.addEventListener("keydown", _ => {
     console.log("down")

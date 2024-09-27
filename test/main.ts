@@ -11,6 +11,7 @@ const createWindow = () => {
         title: "main",
         width: 800,
         height: 601,
+        darkTheme:true,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
         },
@@ -18,34 +19,46 @@ const createWindow = () => {
 
     win.loadFile("index.html");
 
-    // const win2 = new BrowserWindow({
-    //     title: "sub",
-    //     parent: win,
-    //     width: 800,
-    //     height: 601,
-    //     webPreferences: {
-    //         preload: path.join(__dirname, "preload.js"),
-    //     },
-    // });
-
-    // win2.loadFile("index2.html");
-
     menu = new Menu();
     const hbuf = win.getNativeWindowHandle();
     let hwnd = 0;
+
     if (os.endianness() == "LE") {
-        hwnd = hbuf.readInt32LE();
+        hwnd = hbuf.readUInt32LE();
     } else {
-        hwnd = hbuf.readInt32BE();
+        hwnd = hbuf.readUInt32BE();
     }
     let config = getDefaultConfig();
 
-    config.theme = "dark";
+    config.theme = "light";
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
+
+    const win2 = new BrowserWindow({
+        title: "sub",
+        parent: win,
+        width: 800,
+        height: 601,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+        },
+    });
+
+    win2.loadFile("index2.html");
+    const menu2 = new Menu();
+    const hbuf2 = win2.getNativeWindowHandle();
+
+    if (os.endianness() == "LE") {
+        hwnd = hbuf2.readUInt32LE();
+    } else {
+        hwnd = hbuf2.readUInt32BE();
+    }
+
+    menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 
 const handleSetTitle = async (_event: any, pos: any) => {
+    console.log("start")
     await menu.popup(pos.x, pos.y);
 };
 

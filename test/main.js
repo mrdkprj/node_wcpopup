@@ -51,39 +51,51 @@ var createWindow = function () {
         title: "main",
         width: 800,
         height: 601,
+        darkTheme: true,
         webPreferences: {
             preload: path_1.default.join(__dirname, "preload.js"),
         },
     });
     win.loadFile("index.html");
-    // const win2 = new BrowserWindow({
-    //     title: "sub",
-    //     parent: win,
-    //     width: 800,
-    //     height: 601,
-    //     webPreferences: {
-    //         preload: path.join(__dirname, "preload.js"),
-    //     },
-    // });
-    // win2.loadFile("index2.html");
     menu = new index_1.Menu();
     var hbuf = win.getNativeWindowHandle();
     var hwnd = 0;
     if (os_1.default.endianness() == "LE") {
-        hwnd = hbuf.readInt32LE();
+        hwnd = hbuf.readUInt32LE();
     }
     else {
-        hwnd = hbuf.readInt32BE();
+        hwnd = hbuf.readUInt32BE();
     }
     var config = (0, index_1.getDefaultConfig)();
-    config.theme = "dark";
+    config.theme = "light";
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
+    var win2 = new electron_1.BrowserWindow({
+        title: "sub",
+        parent: win,
+        width: 800,
+        height: 601,
+        webPreferences: {
+            preload: path_1.default.join(__dirname, "preload.js"),
+        },
+    });
+    win2.loadFile("index2.html");
+    var menu2 = new index_1.Menu();
+    var hbuf2 = win2.getNativeWindowHandle();
+    if (os_1.default.endianness() == "LE") {
+        hwnd = hbuf2.readUInt32LE();
+    }
+    else {
+        hwnd = hbuf2.readUInt32BE();
+    }
+    menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 var handleSetTitle = function (_event, pos) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, menu.popup(pos.x, pos.y)];
+            case 0:
+                console.log("start");
+                return [4 /*yield*/, menu.popup(pos.x, pos.y)];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
