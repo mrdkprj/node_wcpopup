@@ -51,7 +51,7 @@ var createWindow = function () {
         title: "main",
         width: 800,
         height: 601,
-        darkTheme: true,
+        // darkTheme:true,
         webPreferences: {
             preload: path_1.default.join(__dirname, "preload.js"),
         },
@@ -67,7 +67,8 @@ var createWindow = function () {
         hwnd = hbuf.readUInt32BE();
     }
     var config = (0, index_1.getDefaultConfig)();
-    config.theme = "light";
+    console.log("node:".concat(config.color.dark.accelerator));
+    config.theme = "dark";
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
     // const win2 = new BrowserWindow({

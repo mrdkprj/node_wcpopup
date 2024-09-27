@@ -11,7 +11,8 @@ const createWindow = () => {
         title: "main",
         width: 800,
         height: 601,
-        darkTheme:true,
+        // darkTheme:true,
+
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
         },
@@ -23,14 +24,22 @@ const createWindow = () => {
     const hbuf = win.getNativeWindowHandle();
     let hwnd = 0;
 
-    if (os.endianness() == "LE") {
-        hwnd = hbuf.readUInt32LE();
+    if (os.platform() == "linux") {
+        if (os.endianness() == "LE") {
+            hwnd = hbuf.readUInt32LE();
+        } else {
+            hwnd = hbuf.readUInt32BE();
+        }
     } else {
-        hwnd = hbuf.readUInt32BE();
+        if (os.endianness() == "LE") {
+            hwnd = hbuf.readInt32LE();
+        } else {
+            hwnd = hbuf.readInt32BE();
+        }
     }
     let config = getDefaultConfig();
-
-    config.theme = "light";
+    console.log(`node:${config.color.dark.accelerator}`);
+    config.theme = "dark";
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 
@@ -58,7 +67,7 @@ const createWindow = () => {
 };
 
 const handleSetTitle = async (_event: any, pos: any) => {
-    console.log("start")
+    console.log("start");
     await menu.popup(pos.x, pos.y);
 };
 

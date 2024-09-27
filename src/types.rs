@@ -60,6 +60,10 @@ pub fn to_i32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> 
     value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as i32
 }
 
+pub fn to_u32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> u32 {
+    value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as u32
+}
+
 pub fn to_f32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> f32 {
     value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as f32
 }
@@ -233,23 +237,23 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
     let light_color_scheme_obj = color_obj.get::<JsObject, _, _>(cx, "light").unwrap();
 
     let dark = ColorScheme {
-        color: to_i32(cx, &dark_color_scheme_obj, "color") as u32,
-        accelerator: to_i32(cx, &dark_color_scheme_obj, "accelerator") as u32,
-        border: to_i32(cx, &dark_color_scheme_obj, "border") as u32,
-        separator: to_i32(cx, &dark_color_scheme_obj, "separator") as u32,
-        disabled: to_i32(cx, &dark_color_scheme_obj, "disabled") as u32,
-        background_color: to_i32(cx, &dark_color_scheme_obj, "backgroundColor") as u32,
-        hover_background_color: to_i32(cx, &dark_color_scheme_obj, "hoverBackgroundColor") as u32,
+        color: to_u32(cx, &dark_color_scheme_obj, "color"),
+        accelerator: to_u32(cx, &dark_color_scheme_obj, "accelerator"),
+        border: to_u32(cx, &dark_color_scheme_obj, "border"),
+        separator: to_u32(cx, &dark_color_scheme_obj, "separator"),
+        disabled: to_u32(cx, &dark_color_scheme_obj, "disabled"),
+        background_color: to_u32(cx, &dark_color_scheme_obj, "backgroundColor"),
+        hover_background_color: to_u32(cx, &dark_color_scheme_obj, "hoverBackgroundColor"),
     };
 
     let light = ColorScheme {
-        color: to_i32(cx, &light_color_scheme_obj, "color") as u32,
-        accelerator: to_i32(cx, &light_color_scheme_obj, "accelerator") as u32,
-        border: to_i32(cx, &light_color_scheme_obj, "border") as u32,
-        separator: to_i32(cx, &light_color_scheme_obj, "separator") as u32,
-        disabled: to_i32(cx, &light_color_scheme_obj, "disabled") as u32,
-        background_color: to_i32(cx, &light_color_scheme_obj, "backgroundColor") as u32,
-        hover_background_color: to_i32(cx, &light_color_scheme_obj, "hoverBackgroundColor") as u32,
+        color: to_u32(cx, &light_color_scheme_obj, "color"),
+        accelerator: to_u32(cx, &light_color_scheme_obj, "accelerator"),
+        border: to_u32(cx, &light_color_scheme_obj, "border"),
+        separator: to_u32(cx, &light_color_scheme_obj, "separator"),
+        disabled: to_u32(cx, &light_color_scheme_obj, "disabled"),
+        background_color: to_u32(cx, &light_color_scheme_obj, "backgroundColor"),
+        hover_background_color: to_u32(cx, &light_color_scheme_obj, "hoverBackgroundColor"),
     };
 
     let color = ThemeColor {
