@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "install": "npm run build",
-    "build": "tsc ./lib/index.ts --esModuleInterop && cargo-cp-artifact -a cdylib node_wcpopup ./build/index.node -- cargo build --message-format=json-render-diagnostics --release && cargo clean",
+    "build": "cargo-cp-artifact -a cdylib node_wcpopup ./build/index.node -- cargo build --message-format=json-render-diagnostics --release && cargo clean",
     "build-release": "tsc ./lib/index.ts --esModuleInterop && npm run build -- --release"
   },
 
