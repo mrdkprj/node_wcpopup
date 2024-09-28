@@ -60,11 +60,21 @@ var createWindow = function () {
     menu = new index_1.Menu();
     var hbuf = win.getNativeWindowHandle();
     var hwnd = 0;
-    if (os_1.default.endianness() == "LE") {
-        hwnd = hbuf.readUInt32LE();
+    if (os_1.default.platform() == "linux") {
+        if (os_1.default.endianness() == "LE") {
+            hwnd = hbuf.readUInt32LE();
+        }
+        else {
+            hwnd = hbuf.readUInt32BE();
+        }
     }
     else {
-        hwnd = hbuf.readUInt32BE();
+        if (os_1.default.endianness() == "LE") {
+            hwnd = hbuf.readInt32LE();
+        }
+        else {
+            hwnd = hbuf.readInt32BE();
+        }
     }
     var config = (0, index_1.getDefaultConfig)();
     console.log("node:".concat(config.color.dark.accelerator));
