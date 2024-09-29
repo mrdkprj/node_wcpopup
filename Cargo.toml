@@ -1,12 +1,12 @@
 [package]
-name = "node_wcpopup"
-version = "0.0.5"
+name = "wcpopup_node"
+version = "0.1.0"
 license = "MIT"
 edition = "2021"
 exclude = ["index.node"]
 
 [lib]
-name = "node_wcpopup"
+name = "wcpopup_node"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 

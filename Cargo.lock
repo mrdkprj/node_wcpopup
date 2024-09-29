@@ -741,18 +741,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "node_wcpopup"
-version = "0.0.5"
-dependencies = [
- "async-std",
- "gdkx11",
- "gtk",
- "neon",
- "once_cell",
- "wcpopup",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1213,6 +1201,18 @@ dependencies = [
  "serde",
  "windows",
  "windows-version",
+]
+
+[[package]]
+name = "wcpopup_node"
+version = "0.1.0"
+dependencies = [
+ "async-std",
+ "gdkx11",
+ "gtk",
+ "neon",
+ "once_cell",
+ "wcpopup",
 ]
 
 [[package]]
