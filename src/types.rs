@@ -175,10 +175,10 @@ pub fn from_menu<'a, C: Context<'a>>(cx: &mut C, menu: &Menu) -> JsResult<'a, Js
     let obj = cx.empty_object();
 
     #[cfg(target_os = "windows")]
-    let hwnd = cx.number(menu.window_handle as f64);
+    let menu_handle = cx.number(menu.window_handle as f64);
     #[cfg(target_os = "linux")]
-    let hwnd = cx.number(menu.gtk_menu_handle as f64);
-    obj.set(cx, "hwnd", hwnd)?;
+    let menu_handle = cx.number(menu.gtk_menu_handle as f64);
+    obj.set(cx, "menuWindowHandle", menu_handle)?;
 
     let type_str = match menu.menu_type {
         MenuType::Main => "main",
@@ -203,7 +203,7 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
     let size = MenuSize {
         border_size: to_i32(cx, &size_obj, "borderSize"),
         vertical_padding: to_i32(cx, &size_obj, "verticalPadding"),
-        horizontal_padding: to_i32(cx, &size_obj, "horizontalPaddint"),
+        horizontal_padding: to_i32(cx, &size_obj, "horizontalPadding"),
         item_vertical_padding: to_i32(cx, &size_obj, "itemVerticalPadding"),
         item_horizontal_padding: to_i32(cx, &size_obj, "itemHorizontalPadding"),
         submenu_offset: to_i32(cx, &size_obj, "submenuOffset"),

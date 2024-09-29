@@ -79,32 +79,32 @@ export const getDefaultConfig = () => {
 };
 
 export class Menu {
-    private hwnd = 0;
+    private menuWindowHandle = 0;
     type = "";
     private callbacks: { [key: string]: Function } = {};
     private uuid = 0;
 
     private ready() {
-        if (!this.hwnd) throw new Error("Menu does not exist");
+        if (!this.menuWindowHandle) throw new Error("Menu does not exist");
     }
 
     getWindowHandle(): number {
-        return this.hwnd;
+        return this.menuWindowHandle;
     }
 
-    buildFromTemplate(hwnd: number, template: MenuItemConstructorOptions[]) {
+    buildFromTemplate(menuWindowHandle: number, template: MenuItemConstructorOptions[]) {
         const effectiveTemplate = this.toEffectiveTemplates(template);
-        this.hwnd = PopupMenu.buildFromTemplate(hwnd, effectiveTemplate);
+        this.menuWindowHandle = PopupMenu.buildFromTemplate(menuWindowHandle, effectiveTemplate);
     }
 
-    buildFromTemplateWithTheme(hwnd: number, template: MenuItemConstructorOptions[], theme: Theme) {
+    buildFromTemplateWithTheme(menuWindowHandle: number, template: MenuItemConstructorOptions[], theme: Theme) {
         const effectiveTemplate = this.toEffectiveTemplates(template);
-        this.hwnd = PopupMenu.buildFromTemplateWithTheme(hwnd, effectiveTemplate, theme);
+        this.menuWindowHandle = PopupMenu.buildFromTemplateWithTheme(menuWindowHandle, effectiveTemplate, theme);
     }
 
-    buildFromTemplateWithConfig(hwnd: number, template: MenuItemConstructorOptions[], config: Config) {
+    buildFromTemplateWithConfig(menuWindowHandle: number, template: MenuItemConstructorOptions[], config: Config) {
         const effectiveTemplate = this.toEffectiveTemplates(template);
-        this.hwnd = PopupMenu.buildFromTemplateWithConfig(hwnd, effectiveTemplate, config);
+        this.menuWindowHandle = PopupMenu.buildFromTemplateWithConfig(menuWindowHandle, effectiveTemplate, config);
     }
 
     private toEffectiveTemplates(items: MenuItemConstructorOptions[]): MenuItemConstructorOptions[] {
@@ -151,7 +151,7 @@ export class Menu {
     private toMenuItem(item: PopupMenu.PopupMenuItem): MenuItem {
         const submenu = new Menu();
         if (item.submenu && Object.keys(item.submenu).length) {
-            submenu.hwnd = item.submenu.hwnd;
+            submenu.menuWindowHandle = item.submenu.menuWindowHandle;
             submenu.type = item.submenu.type;
         }
         return {
@@ -163,7 +163,7 @@ export class Menu {
 
     async popup(x: number, y: number) {
         this.ready();
-        const result = await PopupMenu.popup(this.hwnd, x, y);
+        const result = await PopupMenu.popup(this.menuWindowHandle, x, y);
         if (Object.keys(result).length) {
             this.callbacks[result.id](result);
         }
@@ -171,37 +171,37 @@ export class Menu {
 
     items(): MenuItem[] {
         this.ready();
-        return PopupMenu.items(this.hwnd).map((item) => this.toMenuItem(item));
+        return PopupMenu.items(this.menuWindowHandle).map((item) => this.toMenuItem(item));
     }
 
     remove(item: MenuItem) {
         this.ready();
-        PopupMenu.remove(this.hwnd, item);
+        PopupMenu.remove(this.menuWindowHandle, item);
     }
 
     removeAt(index: number) {
         this.ready();
-        PopupMenu.removeAt(this.hwnd, index);
+        PopupMenu.removeAt(this.menuWindowHandle, index);
     }
 
     append(item: MenuItem) {
         this.ready();
-        PopupMenu.append(this.hwnd, this.toEffectiveTemplate(item) as MenuItem);
+        PopupMenu.append(this.menuWindowHandle, this.toEffectiveTemplate(item) as MenuItem);
     }
 
     insert(index: number, item: MenuItem) {
         this.ready();
-        PopupMenu.insert(this.hwnd, index, this.toEffectiveTemplate(item) as MenuItem);
+        PopupMenu.insert(this.menuWindowHandle, index, this.toEffectiveTemplate(item) as MenuItem);
     }
 
     setTheme(theme: Theme) {
         this.ready();
-        PopupMenu.setTheme(this.hwnd, theme);
+        PopupMenu.setTheme(this.menuWindowHandle, theme);
     }
 
     getMenuItemById(id: string): MenuItem | void {
         this.ready();
-        const item = PopupMenu.getMenuItemById(this.hwnd, id);
+        const item = PopupMenu.getMenuItemById(this.menuWindowHandle, id);
         if (item) {
             return this.toMenuItem(item);
         }

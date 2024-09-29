@@ -15,17 +15,17 @@ declare namespace PopupMenu {
     };
 
     function getDefaultConfig(): Config;
-    function buildFromTemplate(hwnd:number, template:MenuItemConstructorOptions[]): number;
-    function buildFromTemplateWithTheme(hwnd:number, template:MenuItemConstructorOptions[], theme:Theme): number;
-    function buildFromTemplateWithConfig(hwnd:number, template:MenuItemConstructorOptions[], config:Config): number;
-    function popup(hwnd:number, x:number, y:number): Promise<PopupMenuItem>;
-    function items(hwnd:number): PopupMenuItem[];
-    function remove(hwnd:number, item:MenuItem): void;
-    function removeAt(hwnd:number, index:number): void;
-    function append(hwnd:number, item:MenuItem): void;
-    function insert(hwnd:number, index:number, item:MenuItem): void;
-    function setTheme(hwnd:number, theme:Theme): void;
-    function getMenuItemById(hwnd:number, id:string): PopupMenuItem | void;
+    function buildFromTemplate(menuWindowHandle:number, template:MenuItemConstructorOptions[]): number;
+    function buildFromTemplateWithTheme(menuWindowHandle:number, template:MenuItemConstructorOptions[], theme:Theme): number;
+    function buildFromTemplateWithConfig(menuWindowHandle:number, template:MenuItemConstructorOptions[], config:Config): number;
+    function popup(menuWindowHandle:number, x:number, y:number): Promise<PopupMenuItem>;
+    function items(menuWindowHandle:number): PopupMenuItem[];
+    function remove(menuWindowHandle:number, item:MenuItem): void;
+    function removeAt(menuWindowHandle:number, index:number): void;
+    function append(menuWindowHandle:number, item:MenuItem): void;
+    function insert(menuWindowHandle:number, index:number, item:MenuItem): void;
+    function setTheme(menuWindowHandle:number, theme:Theme): void;
+    function getMenuItemById(menuWindowHandle:number, id:string): PopupMenuItem | void;
 }
 
 export = PopupMenu;
