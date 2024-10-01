@@ -81,24 +81,25 @@ var createWindow = function () {
     config.theme = "dark";
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
-    // const win2 = new BrowserWindow({
-    //     title: "sub",
-    //     parent: win,
-    //     width: 800,
-    //     height: 601,
-    //     webPreferences: {
-    //         preload: path.join(__dirname, "preload.js"),
-    //     },
-    // });
-    // win2.loadFile("index2.html");
-    // const menu2 = new Menu();
-    // const hbuf2 = win2.getNativeWindowHandle();
-    // if (os.endianness() == "LE") {
-    //     hwnd = hbuf2.readUInt32LE();
-    // } else {
-    //     hwnd = hbuf2.readUInt32BE();
-    // }
-    // menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
+    var win2 = new electron_1.BrowserWindow({
+        title: "sub",
+        parent: win,
+        width: 800,
+        height: 601,
+        webPreferences: {
+            preload: path_1.default.join(__dirname, "preload.js"),
+        },
+    });
+    win2.loadFile("index2.html");
+    var menu2 = new index_1.Menu();
+    var hbuf2 = win2.getNativeWindowHandle();
+    if (os_1.default.endianness() == "LE") {
+        hwnd = hbuf2.readUInt32LE();
+    }
+    else {
+        hwnd = hbuf2.readUInt32BE();
+    }
+    menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 var handleSetTitle = function (_event, pos) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {

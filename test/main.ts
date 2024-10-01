@@ -43,27 +43,27 @@ const createWindow = () => {
     config.size.itemVerticalPadding = 10;
     menu.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 
-    // const win2 = new BrowserWindow({
-    //     title: "sub",
-    //     parent: win,
-    //     width: 800,
-    //     height: 601,
-    //     webPreferences: {
-    //         preload: path.join(__dirname, "preload.js"),
-    //     },
-    // });
+    const win2 = new BrowserWindow({
+        title: "sub",
+        parent: win,
+        width: 800,
+        height: 601,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+        },
+    });
 
-    // win2.loadFile("index2.html");
-    // const menu2 = new Menu();
-    // const hbuf2 = win2.getNativeWindowHandle();
+    win2.loadFile("index2.html");
+    const menu2 = new Menu();
+    const hbuf2 = win2.getNativeWindowHandle();
 
-    // if (os.endianness() == "LE") {
-    //     hwnd = hbuf2.readUInt32LE();
-    // } else {
-    //     hwnd = hbuf2.readUInt32BE();
-    // }
+    if (os.endianness() == "LE") {
+        hwnd = hbuf2.readUInt32LE();
+    } else {
+        hwnd = hbuf2.readUInt32BE();
+    }
 
-    // menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
+    menu2.buildFromTemplateWithConfig(hwnd, getTemp(), config);
 };
 
 const handleSetTitle = async (_event: any, pos: any) => {
