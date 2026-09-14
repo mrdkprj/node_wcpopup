@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use neon::{
     handle::Handle,
     prelude::*,
@@ -7,7 +5,7 @@ use neon::{
     types::{JsArray, JsBoolean, JsNumber, JsObject, JsString},
 };
 use wcpopup::{
-    config::{ColorScheme, Config, Corner, FontWeight, IconSettings, MenuFont, MenuSVG, MenuSize, Theme, ThemeColor},
+    config::{ColorScheme, Config, Corner, FontWeight, IconSettings, MenuFont, MenuSize, Theme, ThemeColor},
     Menu, MenuIcon, MenuItem, MenuItemType, MenuType,
 };
 
@@ -21,7 +19,7 @@ pub struct ElectronMenuItem {
     pub submenu: Vec<ElectronMenuItem>,
     pub id: String,
     pub name: String,
-    pub icon: String,
+    pub icon: Option<MenuIcon>,
 }
 
 impl ElectronMenuItem {
@@ -47,7 +45,7 @@ impl ElectronMenuItem {
                 .collect(),
             id: to_string(cx, &value, "id"),
             name: to_string(cx, &value, "name"),
-            icon: to_string(cx, &value, "icon"),
+            icon: to_menu_icon(cx, &value, "icon"),
         }
     }
 }
@@ -91,6 +89,22 @@ pub fn to_f32(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> 
     value.get_opt::<JsNumber, _, _>(cx, key).unwrap().unwrap_or_else(|| JsNumber::new(cx, 0)).value(cx) as f32
 }
 
+pub fn to_menu_icon(cx: &mut FunctionContext, value: &Handle<JsObject>, key: &str) -> Option<MenuIcon> {
+    if let Some(value) = value.get_opt::<JsObject, _, _>(cx, key).unwrap() {
+        let width: u32 = value.prop(cx, "width").get::<f64>().unwrap_or_default() as _;
+        let height: u32 = value.prop(cx, "height").get::<f64>().unwrap_or_default() as _;
+
+        if let Ok(path) = value.prop(cx, "path").get::<String>() {
+            return Some(MenuIcon::new(path, width, height));
+        } else if let Ok(svg) = value.prop(cx, "data").get::<String>() {
+            return Some(MenuIcon::from_svg(svg, width, height));
+        } else if let Ok(data) = value.prop(cx, "data").get::<Vec<u8>>() {
+            return Some(MenuIcon::from_data(data, width, height));
+        }
+    }
+    None
+}
+
 pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuItem {
     let id = to_string(cx, &value, "id");
     let label = to_string(cx, &value, "label");
@@ -98,12 +112,7 @@ pub fn to_menu_item(cx: &mut FunctionContext, value: Handle<JsObject>) -> MenuIt
     let name = to_string(cx, &value, "name");
     let enabled = to_bool(cx, &value, "enabled", true);
     let checked = to_bool(cx, &value, "checked", false);
-    let icon_path = to_string(cx, &value, "icon");
-    let icon = if icon_path.is_empty() {
-        None
-    } else {
-        Some(MenuIcon::new(icon_path))
-    };
+    let icon = to_menu_icon(cx, &value, "icon");
 
     let accelerator = if accelerator_str.is_empty() {
         None
@@ -186,8 +195,8 @@ pub fn from_menu_item<'a, C: Context<'a>>(cx: &mut C, item: &MenuItem) -> JsResu
     let menu_item_type_str = cx.string(menu_item_type_str);
     obj.set(cx, "type", menu_item_type_str)?;
 
-    let submenu = if item.submenu.is_some() {
-        from_menu(cx, item.submenu.as_ref().unwrap())?
+    let submenu = if let Some(submenu) = &item.submenu {
+        from_menu(cx, submenu)?
     } else {
         cx.empty_object()
     };
@@ -295,23 +304,12 @@ pub fn to_config(cx: &mut FunctionContext, value: Handle<JsObject>) -> Config {
 
     let icon_obj = value.get_opt::<JsObject, _, _>(cx, "icon").unwrap();
     let icon = if let Some(icon_obj) = icon_obj {
-        let check_svg_obj = icon_obj.get_opt::<JsObject, _, _>(cx, "checkSVG").unwrap();
-        let check_svg = check_svg_obj.map(|chekc_svg| MenuSVG {
-            path: PathBuf::from(to_string(cx, &chekc_svg, "path")),
-            width: to_i32(cx, &chekc_svg, "width"),
-            height: to_i32(cx, &chekc_svg, "height"),
-        });
-
-        let arrow_svg_obj = icon_obj.get_opt::<JsObject, _, _>(cx, "arrowSVG").unwrap();
-        let arrow_svg = arrow_svg_obj.map(|arrow_svg| MenuSVG {
-            path: PathBuf::from(to_string(cx, &arrow_svg, "path")),
-            width: to_i32(cx, &arrow_svg, "width"),
-            height: to_i32(cx, &arrow_svg, "height"),
-        });
+        let check = to_menu_icon(cx, &value, "check");
+        let arrow = to_menu_icon(cx, &value, "arrow");
 
         Some(IconSettings {
-            check_svg,
-            arrow_svg,
+            check,
+            arrow,
             reserve_icon_size: to_bool(cx, &icon_obj, "reserveIconSize", false),
             horizontal_margin: Some(to_i32(cx, &icon_obj, "horizontalMargin")),
         })
@@ -431,47 +429,6 @@ pub fn from_config<'a, C: Context<'a>>(cx: &mut C, config: &Config) -> JsResult<
     configjs.set(cx, "font", font)?;
 
     let icon_obj = cx.empty_object();
-
-    if let Some(icon) = &config.icon {
-        let check_svg_obj = cx.empty_object();
-        if let Some(check_svg) = &icon.check_svg {
-            let a = cx.string(check_svg.path.to_string_lossy());
-            check_svg_obj.set(cx, "path", a)?;
-            let a = cx.number(check_svg.width);
-            check_svg_obj.set(cx, "width", a)?;
-            let a = cx.number(check_svg.height);
-            check_svg_obj.set(cx, "height", a)?;
-            icon_obj.set(cx, "checkSVG", check_svg_obj)?;
-        } else {
-            let undefined = cx.undefined();
-            icon_obj.set(cx, "checkSVG", undefined)?;
-        }
-
-        let arrow_svg_obj = cx.empty_object();
-        if let Some(arrow_svg) = &icon.arrow_svg {
-            let a = cx.string(arrow_svg.path.to_string_lossy());
-            arrow_svg_obj.set(cx, "path", a)?;
-            let a = cx.number(arrow_svg.width);
-            arrow_svg_obj.set(cx, "width", a)?;
-            let a = cx.number(arrow_svg.height);
-            arrow_svg_obj.set(cx, "height", a)?;
-            icon_obj.set(cx, "arrowSVG", arrow_svg_obj)?;
-        } else {
-            let undefined = cx.undefined();
-            icon_obj.set(cx, "arrowSVG", undefined)?;
-        }
-
-        let a = cx.boolean(icon.reserve_icon_size);
-        icon_obj.set(cx, "reserveIconSize", a)?;
-        if let Some(margin) = icon.horizontal_margin {
-            let a = cx.number(margin);
-            icon_obj.set(cx, "horizontalMargin", a)?;
-        } else {
-            let undefined = cx.undefined();
-            icon_obj.set(cx, "horizontalMargin", undefined)?;
-        }
-    }
-
     configjs.set(cx, "icon", icon_obj)?;
 
     Ok(configjs)

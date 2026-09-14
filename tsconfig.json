@@ -12,11 +12,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "sourceMap": false,
-    "baseUrl": ".",
     "outDir": "lib",
     "moduleResolution": "nodenext",
     "paths": {
-      "*": ["node_modules/*"],
+      "*": ["./node_modules/*"],
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },

@@ -12,7 +12,7 @@ export type MenuItemConstructorOptions = {
     submenu?: MenuItemConstructorOptions[] | Menu;
     name?: string;
     click?: Function;
-    icon?: string;
+    icon?: PathIcon | DataIcon | SvgIcon;
 };
 
 export type MenuItem = {
@@ -25,6 +25,24 @@ export type MenuItem = {
     submenu?: Menu;
     name?: string;
     click?: Function;
+};
+
+export type PathIcon = {
+    path: string;
+    width: number;
+    height: number;
+};
+
+export type DataIcon = {
+    data: number[];
+    width: number;
+    height: number;
+};
+
+export type SvgIcon = {
+    data: string;
+    width: number;
+    height: number;
 };
 
 export type Theme = "dark" | "light" | "system";
